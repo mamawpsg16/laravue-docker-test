@@ -1,0 +1,67 @@
+services:
+  app: # Changed from 'php' to 'app' for clarity; more descriptive
+    build:
+      context: . # Current directory
+      dockerfile: Dockerfile.php # Correct Dockerfile name
+    container_name: laravel-app # Consistent naming
+    working_dir: /var/www/html # Application's root directory
+    volumes:
+      - ./src:/var/www/html # Mounts your application code; useful for development
+    networks:
+      - app-network
+    depends_on: # Define dependencies for startup order
+      - db
+    #  ports: # Removed ports.  Expose in nginx, not here.
+    #    - "9000:9000" # PHP-FPM port;  No need to expose this to the host
+    
+  web: # Changed from 'nginx' to 'web'
+    image: nginx:alpine # Lightweight Nginx image
+    container_name: nginx-webserver # Consistent naming
+    ports:
+      - "8000:80" # Host:Container port mapping.  Use 8000 for local
+    volumes:
+      - ./src:/var/www/html # Serve your application files
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf # Nginx configuration
+    depends_on:
+      - app # Depend on the 'app' service (PHP-FPM)
+    networks:
+      - app-network
+    
+  db: # Using 'db' is fine, but 'database' is also common
+    image: mysql:5.7 # Or a specific version
+    container_name: mysql-db # Consistent naming
+    environment:
+      MYSQL_ROOT_PASSWORD: secret # DO NOT USE 'secret' in production
+      MYSQL_DATABASE: laravel #Should be in .env
+      MYSQL_USER: laravel    #Should be in .env
+      MYSQL_PASSWORD: secret # DO NOT USE 'secret' in production #Should be in .env
+      #  MYSQL_TCP_PORT: 3306 # Explicitly set the port, though it defaults to 3306.
+    volumes:
+      - dbdata:/var/lib/mysql # Persist database data
+    networks:
+      - app-network
+    #ports: #Do not expose the database port to the host
+    #  - "3306:3306" # Only needed for direct access (e.g., with a client)
+    
+  # Add a phpmyadmin service only for development.  Do not use in production.
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "8085:80"
+    environment:
+      PMA_HOST: db  # Connect to the 'db' service
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 0 #Set to 0 for security
+    depends_on:
+      - db
+    networks:
+      - app-network
+    
+networks:
+  app-network:
+    driver: bridge # Default bridge network
+
+volumes:
+  dbdata: # Named volume for database persistence
+    driver: local
