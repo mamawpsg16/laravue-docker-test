@@ -1,0 +1,18 @@
+#PHP UNIT TEST COMMANDS
+#run specific class in either Unit/Feature folder
+php artisan test --filter=MathServiceTest 
+
+#run specific test method in a class in either Unit/Feature folder
+php artisan test --filter=MathServiceTest::test_add_numbers 
+
+#run all tests in Unit/Feature
+php artisan test --filter=Unit
+php artisan test --filter=Feature
+
+#run all tests in Unit&Feature
+php artisan test
+
+
+#USING PHP UNIT DIRECTLY
+./vendor/bin/phpunit --testsuite=Unit
+./vendor/bin/phpunit --testsuite=Feature
