@@ -1,10 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Login from '@/views/authentication/Login.vue';
-import Register from '@/views/authentication/Register.vue';
-import Dashboard from '@/views/Dashboard.vue';
-import PageNotFound from '@/views/error/PageNotFound.vue';
 import { useAuthStore } from '@/stores/auth';
 import { watch } from 'vue';
+
+// Lazy load components for better performance
+const Login = () => import('@/views/authentication/Login.vue');
+const Register = () => import('@/views/authentication/Register.vue');
+const Dashboard = () => import('@/views/Dashboard.vue');
+const PageNotFound = () => import('@/views/error/PageNotFound.vue');
+
 
 const routes = [
   {

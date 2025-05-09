@@ -15,21 +15,27 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy current directory to /var/www/html in the container
-COPY . /var/www/html
+# Copy composer files first for better layer caching
+COPY composer.json composer.lock ./
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Install dependencies (this will create the vendor directory)
+RUN composer install --no-scripts --no-autoloader
+
+# Copy rest of the application
+COPY . .
+
+# Run composer dump-autoload
+RUN composer dump-autoload --optimize
 
 # Ensure storage and cache directories exist and set the correct permissions
 RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache && \
-    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Install Composer (PHP dependency manager)
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Set the entrypoint
-ENTRYPOINT ["/bin/sh", "-c"]
-
-# Set the default command
-CMD ["if [ ! -d \"vendor\" ]; then composer install --no-interaction --no-plugins --no-scripts; fi && php-fpm"]
+    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/vendor
 
 # Expose port 9000 (used by PHP-FPM)
 EXPOSE 9000
+
+# Set the entrypoint
+CMD ["php-fpm"]
