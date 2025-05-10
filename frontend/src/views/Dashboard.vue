@@ -3,6 +3,8 @@
     <div class="card shadow">
       <div class="card-body text-center">
         <h2 class="card-title mb-3">Welcome to your Dashboard</h2>
+        <button @click="getUserDetails">Get User Details</button>
+        <p>{{ userDetails }}</p>
         <p class="lead">Logged in as: <strong>{{ user?.name }}</strong></p>
         <button @click="logout" class="btn btn-danger mt-3">Logout</button>
       </div>
@@ -14,6 +16,11 @@
 import { useAuthStore } from '@/stores/auth';
 
 export default {
+  data(){
+    return{
+      userDetails: null,
+    }
+  },
   computed: {
     user() {
       return useAuthStore().user;
@@ -24,6 +31,14 @@ export default {
       const authStore = useAuthStore();
       await authStore.logout();
       this.$router.push({ name: 'login' });
+    },
+    async getUserDetails() {
+      try {
+        this.userDetails = this.user;
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+        alert('Failed to fetch user details.');
+      }
     },
   },
 };
