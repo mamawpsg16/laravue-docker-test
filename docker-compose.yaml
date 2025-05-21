@@ -6,6 +6,7 @@ services:
     working_dir: /var/www/html # Application's root directory
     volumes:
       - ./backend:/var/www/html # Mounts your application code; useful for development
+      - vendor-volume:/var/www/html/vendor  # This will preserve the vendor directory which will not affect the host
     user: "${UID}:${GID}"
     networks:
       - app-network
@@ -77,4 +78,6 @@ networks:
 
 volumes:
   dbdata: # Named volume for database persistence
+    driver: local
+  vendor-volume:  # Define a named volume for vendor
     driver: local
