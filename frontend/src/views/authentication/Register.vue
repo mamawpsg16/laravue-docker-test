@@ -56,7 +56,7 @@
             <p v-if="errorMessage" class="text-danger mt-3">{{ errorMessage }}</p>
             <p class="mt-3 text-center">
               Already have an account?
-              <router-link to="/login" class="btn btn-link p-0">Login</router-link>
+              <router-link :to="{ name: 'login' }" class="btn btn-link p-0">Login</router-link>
             </p>
           </div>
         </div>

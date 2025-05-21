@@ -1,8 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Login from '@/views/authentication/Login.vue';
-import Register from '@/views/authentication/Register.vue';
-import Dashboard from '@/views/Dashboard.vue';
-import PageNotFound from '@/views/error/PageNotFound.vue';
 import { useAuthStore } from '@/stores/auth';
 import { watch } from 'vue';
 
@@ -10,7 +6,7 @@ const routes = [
   {
     path: '/:catchAll(.*)', // 👈 Catch-all route for 404 pages
     name: 'NotFound',
-    component: PageNotFound,
+    component: () => import('@/views/error/PageNotFound.vue'),
   },
   {
     path: '/',
@@ -19,19 +15,31 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: Login,
+    component: () => import('@/views/authentication/Login.vue'),
     meta: { requiresAuth: false },
   },
   {
     path: '/register',
     name: 'register',
-    component: Register,
+    component: () => import('@/views/authentication/Register.vue'),
     meta: { requiresAuth: false },
   },
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: Dashboard,
+    component: () => import('@/views/Dashboard.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/tasks',
+    name: 'tasks',
+    component: () => import('@/views/tasks/Index.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/features',
+    name: 'features',
+    component: () => import('@/views/Features.vue'),
     meta: { requiresAuth: true },
   },
 ];

@@ -35,7 +35,7 @@
             <p v-if="errorMessage" class="text-danger mt-3">{{ errorMessage }}</p>
             <p class="mt-3 text-center">
               Don't have an account?
-              <router-link to="/register" class="btn btn-link p-0">Register</router-link>
+              <router-link :to="{ name: 'register' }" class="btn btn-link p-0">Register</router-link>
             </p>
           </div>
         </div>
