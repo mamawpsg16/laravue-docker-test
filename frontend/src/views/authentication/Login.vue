@@ -44,31 +44,29 @@
   </div>
 </template>
 
-<script>
-import BaseInput from '@/components/Form/BaseInput.vue';
+<script setup lang="ts">
+import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
+import BaseInput from '@/components/Form/BaseInput.vue';
+import { useRouter } from 'vue-router';
 
-export default {
-  data() {
-    return {
-      email: '',
-      password: '',
-      errorMessage: null,
-    };
-  },
-  components: {
-    BaseInput,
-  },
-  methods: {
-    async login() {
-      const authStore = useAuthStore();
-      try {
-        await authStore.login({ email: this.email, password: this.password });
-        this.$router.push({ name: 'dashboard' });
-      } catch (error) {
-        this.errorMessage = error.message;
-      }
-    },
-  },
-};
+const email = ref('');
+const password = ref('');
+const errorMessage = ref<string | null>(null);
+
+const authStore = useAuthStore();
+const router = useRouter();
+
+async function login() {
+  try {
+    await authStore.login({ email: email.value, password: password.value });
+    router.push({ name: 'dashboard' });
+  }catch (error: unknown) {
+    if (error instanceof Error) {
+      errorMessage.value = error.message;
+    } else {
+      errorMessage.value = String(error) || 'Login failed';
+    }
+  }
+}
 </script>

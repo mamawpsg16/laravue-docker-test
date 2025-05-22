@@ -65,39 +65,36 @@
   </div>
 </template>
 
-<script>
-import BaseInput from '@/components/Form/BaseInput.vue';
+<script setup lang="ts">
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import BaseInput from '@/components/Form/BaseInput.vue';
 
-export default {
-  data() {
-    return {
-      name: '',
-      email: '',
-      password: '',
-      password_confirmation: '',
-      errorMessage: null,
-    };
-  },
-  components: {
-    BaseInput,
-  },
-  methods: {
-    async register() {
-      const authStore = useAuthStore();
-      console.log(authStore,'authStore');
-      try {
-        await authStore.register({
-          name: this.name,
-          email: this.email,
-          password: this.password,
-          password_confirmation: this.password_confirmation,
-        });
-        this.$router.push({ name: 'dashboard' });
-      } catch (error) {
-        this.errorMessage = error.message;
-      }
-    },
-  },
-};
+const name = ref('');
+const email = ref('');
+const password = ref('');
+const password_confirmation = ref('');
+const errorMessage = ref<string | null>(null);
+
+const authStore = useAuthStore();
+const router = useRouter();
+
+async function register() {
+  try {
+    await authStore.register({
+      name: name.value,
+      email: email.value,
+      password: password.value,
+      password_confirmation: password_confirmation.value,
+    });
+    router.push({ name: 'dashboard' });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      errorMessage.value = error.message;
+    } else {
+      errorMessage.value = String(error) || 'Registration failed';
+    }
+  }
+}
 </script>

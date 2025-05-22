@@ -1,6 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import { watch } from 'vue';
+import { watch, defineAsyncComponent } from 'vue';
+// import LoadingSpinner from '@/components/AsyncComponents/LoadingSpinner.vue'
+// import ErrorDisplay from '@/components/AsyncComponents/ErrorDisplay.vue'
+
+// function delay(ms) {
+//   return new Promise(resolve => setTimeout(resolve, ms))
+// }
+
+// const AsyncRegister = defineAsyncComponent({
+//   loader: async () => {
+//     await delay(3000) // simulate slow load (2s)
+//     return import('@/views/authentication/Register.vue')
+//   },
+//   loadingComponent: LoadingSpinner,
+//   errorComponent: ErrorDisplay,
+//   delay: 200,
+//   timeout: 5000,
+// })
 
 const routes = [
   {
@@ -40,11 +57,86 @@ const routes = [
     path: '/features',
     name: 'features',
     component: () => import('@/views/Features.vue'),
+    redirect: { name: 'async' },
     meta: { requiresAuth: true },
+    children:[
+      {
+        path: 'async',
+        name: 'async',
+        component: () => import('@/views/features/async/Index.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: 'slots',
+        name: 'slots',
+        component: () => import('@/views/features/slots/Index.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: 'provide-inject',
+        name: 'provide-inject',
+        component: () => import('@/views/features/provide-inject/Index.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: 'next-tick',
+        name: 'next-tick',
+        component: () => import('@/views/features/next-tick/Index.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: 'global-api',
+        name: 'global-api',
+        component: () => import('@/views/features/global-api/Index.vue'),
+        redirect: { name: 'properties' },
+        meta: { requiresAuth: true },
+        children:[
+          {
+            path: 'properties',
+            name: 'properties',
+            component: () => import('@/views/features/global-api/global-properties.vue'),
+            meta: { requiresAuth: true },
+          },
+          {
+            path: 'directives',
+            name: 'directives',
+            component: () => import('@/views/features/global-api/directives.vue'),
+            meta: { requiresAuth: true },
+          },
+        ]
+      },
+      {
+        path: 'composables',
+        name: 'composables',
+        component: () => import('@/views/features/composables/Index.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: 'teleport',
+        name: 'teleport',
+        component: () => import('@/views/features/teleport/Index.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: 'reactivity',
+        name: 'reactivity',
+        component: () => import('@/views/features/reactivity/Index.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: 'generic-and-proptyping',
+        name: 'generic-and-proptyping',
+        component: () => import('@/views/features/generic-and-proptyping/Index.vue'),
+        meta: { requiresAuth: true },
+      },
+    ]
   },
+ 
 ];
 
 const router = createRouter({
+  linkActiveClass: 'text-primary-emphasis',
+  linkExactActiveClass: 'text-primary fw-bold',
   history: createWebHistory(),
   routes,
 });
