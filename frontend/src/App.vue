@@ -1,9 +1,12 @@
 <template>
   <div id="app" class="d-flex">
-    <AppSidebar v-if="isAuthenticated" />
+    <AppSidebar v-if="isAuthenticated" v-model:visible="sidebarVisible" />
 
     <div class="flex-grow-1">
-      <AppNavbar @toggleSidebar="toggleSidebar" />
+      <AppNavbar
+        :visible="sidebarVisible"
+        @toggleSidebar="toggleSidebar"
+      />
       <main class="p-3">
         <router-view />
       </main>
@@ -12,21 +15,22 @@
 </template>
 
 <script setup>
-import AppSidebar from '@/components/AppSidebar.vue';
-import AppNavbar from '@/components/AppNavbar.vue';
-import { onMounted, ref, computed } from 'vue';
-import { useAuthStore } from '@/stores/auth';
+import AppSidebar from '@/components/AppSidebar.vue'
+import AppNavbar from '@/components/AppNavbar.vue'
+import { ref, computed, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
-const authStore = useAuthStore();
+const authStore = useAuthStore()
 
 const isAuthenticated = computed(() => authStore.isAuthenticated && authStore.user?.email_verified_at)
 
-// Sidebar visibility state can be handled here if you want to pass down or use provide/inject
+const sidebarVisible = ref(true)
+
 const toggleSidebar = () => {
-  // implement toggle logic if needed
-};
+  sidebarVisible.value = !sidebarVisible.value
+}
 
 onMounted(() => {
-  authStore.fetchUser();
-});
+  authStore.fetchUser()
+})
 </script>
