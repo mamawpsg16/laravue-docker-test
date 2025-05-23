@@ -42,6 +42,11 @@ const routes = [
     meta: { requiresAuth: false },
   },
   {
+    path: '/email-verification',
+    name: 'email-verification',
+    component: () => import('@/views/authentication/EmailVerification.vue')
+  },
+  {
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('@/views/Dashboard.vue'),
@@ -141,8 +146,11 @@ const router = createRouter({
   routes,
 });
 
+let previousRoute = null;
+
 // This function runs before every route change
 router.beforeEach(async (to, from, next) => {
+  previousRoute = from;
   const authStore = useAuthStore(); // Access the Pinia auth store
 
   // Wait for fetchUser() to finish if it's still loading
@@ -176,6 +184,11 @@ router.beforeEach(async (to, from, next) => {
     next();
   }
 });
+
+// Export a function to access previous route
+export function getPreviousRoute() {
+  return previousRoute;
+}
 
 
 export default router;

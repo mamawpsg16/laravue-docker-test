@@ -1,0 +1,5 @@
+@import 'sweetalert2/src/sweetalert2.scss';
+.swal2-popup {
+  width: 450px !important;  // force width
+  max-width: 90vw !important; // max width relative to viewport
+}

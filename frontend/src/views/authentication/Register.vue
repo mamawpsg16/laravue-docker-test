@@ -50,7 +50,10 @@
                 />
               </div>
               <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-success">Register</button>
+                <span v-if="loading">
+                  <LoadingSpinner/>
+                </span>
+                <button v-else type="submit" class="btn btn-success">Register</button>
               </div>
             </form>
             <p v-if="errorMessage" class="text-danger mt-3">{{ errorMessage }}</p>
@@ -70,17 +73,20 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import BaseInput from '@/components/Form/BaseInput.vue';
+import LoadingSpinner from '@/components/AsyncComponents/LoadingSpinner.vue'
 
 const name = ref('');
 const email = ref('');
 const password = ref('');
 const password_confirmation = ref('');
+const loading = ref(false);
 const errorMessage = ref<string | null>(null);
 
 const authStore = useAuthStore();
 const router = useRouter();
 
 async function register() {
+  loading.value = true;
   try {
     await authStore.register({
       name: name.value,
@@ -95,6 +101,8 @@ async function register() {
     } else {
       errorMessage.value = String(error) || 'Registration failed';
     }
+  }finally {
+    loading.value = false;
   }
 }
 </script>

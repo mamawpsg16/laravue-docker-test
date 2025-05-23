@@ -28,8 +28,11 @@
                   autocomplete="current-password"
                 />
               </div>
-              <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">Login</button>
+              <div class="d-grid gap-2" :disabled="loading">
+                <span v-if="loading">
+                  <LoadingSpinner/>
+                </span>
+                <button v-else type="submit" class="btn btn-primary">Login</button>
               </div>
             </form>
             <p v-if="errorMessage" class="text-danger mt-3">{{ errorMessage }}</p>
@@ -49,7 +52,9 @@ import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import BaseInput from '@/components/Form/BaseInput.vue';
 import { useRouter } from 'vue-router';
+import LoadingSpinner from '@/components/AsyncComponents/LoadingSpinner.vue'
 
+const loading = ref(false);
 const email = ref('');
 const password = ref('');
 const errorMessage = ref<string | null>(null);
@@ -58,6 +63,7 @@ const authStore = useAuthStore();
 const router = useRouter();
 
 async function login() {
+  loading.value = true;
   try {
     await authStore.login({ email: email.value, password: password.value });
     router.push({ name: 'dashboard' });
@@ -67,6 +73,8 @@ async function login() {
     } else {
       errorMessage.value = String(error) || 'Login failed';
     }
+  } finally {
+    loading.value = false;
   }
 }
 </script>
