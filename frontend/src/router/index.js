@@ -42,11 +42,6 @@ const routes = [
     meta: { requiresAuth: false },
   },
   {
-    path: '/email-verification',
-    name: 'email-verification',
-    component: () => import('@/views/authentication/EmailVerification.vue')
-  },
-  {
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('@/views/Dashboard.vue'),
@@ -56,6 +51,12 @@ const routes = [
     path: '/tasks',
     name: 'tasks',
     component: () => import('@/views/tasks/Index.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path:'/profile',
+    name: 'profile',
+    component: () => import('@/views/user/Profile.vue'),
     meta: { requiresAuth: true },
   },
   {

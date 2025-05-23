@@ -1,23 +1,11 @@
 <template>
   <div class="container mt-5">
-    <div class="card shadow">
-      <div class="card-body text-center">
-        <h2 class="card-title mb-3">Welcome to your Dashboard</h2>
-        <div v-if="user.email_verified_at">
-          <button @click="getUserDetails">Get User Details</button>
-          <p>{{ userDetails }}</p>
-          <p class="lead">Logged in as: <strong>{{ user?.name }}</strong></p>
-          <div class="d-flex justify-content-between align-items-center flex-column">
-            <router-link :to="{ name: 'tasks' }" class="btn btn-primary mt-3">Go to Tasks</router-link>
-            <router-link :to="{ name: 'features' }" class="btn btn-primary mt-3">Go to Features</router-link>
-          </div>
-          <button @click="logout" class="btn btn-danger mt-3">Logout</button>
-        </div>
-        <div v-else>
-          <h6 class="mb-3">Haven't verified your email yet?</h6>
-          <button  class="btn btn-primary btn-sm" @click="resendVerificationEmail">Resend Verification Email</button>
-        </div>
-      </div>
+    <div v-if="user.email_verified_at" class="text-center">
+      <h3>DASHBOARD</h3>
+    </div>
+    <div v-if="!user.email_verified_at">
+      <p class="lead">Your email is not verified yet!</p>
+      <button @click="resendVerificationEmail">Resend Verification Email</button>
     </div>
   </div>
 </template>

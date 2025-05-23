@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="card shadow">
           <div class="card-body">
             <h3 class="card-title mb-4 text-center">Register</h3>

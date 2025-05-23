@@ -1,3 +1,7 @@
+/* @import './_bootstrap.scss';
+@import './_coreui.scss'; */
+
+
 /* color palette from <https://github.com/vuejs/theme> */
 :root {
   --vt-c-white: #ffffff;

@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="card shadow">
           <div class="card-body">
             <h3 class="card-title mb-4 text-center">Login</h3>
@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import BaseInput from '@/components/Form/BaseInput.vue';
 import { useRouter } from 'vue-router';
@@ -61,6 +61,7 @@ const errorMessage = ref<string | null>(null);
 
 const authStore = useAuthStore();
 const router = useRouter();
+
 
 async function login() {
   loading.value = true;
