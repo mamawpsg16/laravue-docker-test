@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { watch, defineAsyncComponent } from 'vue';
+import NProgress from 'nprogress';
 // import LoadingSpinner from '@/components/AsyncComponents/LoadingSpinner.vue'
 // import ErrorDisplay from '@/components/AsyncComponents/ErrorDisplay.vue'
 
@@ -18,6 +19,8 @@ import { watch, defineAsyncComponent } from 'vue';
 //   delay: 200,
 //   timeout: 5000,
 // })
+
+NProgress.configure({ showSpinner: false, easing: 'ease', speed: 500,  trickle: false });
 
 const routes = [
   {
@@ -151,6 +154,7 @@ let previousRoute = null;
 
 // This function runs before every route change
 router.beforeEach(async (to, from, next) => {
+  NProgress.start();
   previousRoute = from;
   const authStore = useAuthStore(); // Access the Pinia auth store
 
@@ -185,6 +189,11 @@ router.beforeEach(async (to, from, next) => {
     next();
   }
 });
+
+router.afterEach(() => {
+  NProgress.done();
+});
+
 
 // Export a function to access previous route
 export function getPreviousRoute() {
