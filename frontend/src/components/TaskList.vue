@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div class="container">
     <h2 class="mb-4">Task List</h2>
     
     <form @submit.prevent="submit" class="input-group mb-3">

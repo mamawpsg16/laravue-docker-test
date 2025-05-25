@@ -20,7 +20,12 @@ import NProgress from 'nprogress';
 //   timeout: 5000,
 // })
 
-NProgress.configure({ showSpinner: false, easing: 'ease', speed: 500,  trickle: false });
+NProgress.configure({
+  showSpinner: true,
+  trickle: false,      // no incremental progress
+  easing: 'ease',
+  speed: 500
+})
 
 const routes = [
   {

@@ -1,71 +1,80 @@
 <template>
-  <CNavbar expand="lg" color-scheme="light">
-    <CContainer fluid>
-      <!-- <RouterLink to="/" class="navbar-brand">
-        <img src="@/assets/images/xero.svg" alt="Logo" width="100" height="50" />
-      </RouterLink> -->
-
-      <CNavbarToggler
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <!-- Custom sidebar toggle button -->
+      <div
         v-if="isAuthenticated"
-        aria-label="Toggle navigation"
-        :aria-expanded="visible"
-        @click="$emit('toggleSidebar')"
-      />
+        class="d-lg-none me-2"
+        style="cursor: pointer; padding: 8px; user-select: none;"
+        @click.stop.prevent="toggleSidebar"
+        role="button"
+        tabindex="0"
+        aria-label="Toggle sidebar"
+        @keydown.enter="toggleSidebar"
+        @keydown.space.prevent="toggleSidebar"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </div>
 
-      <CCollapse class="navbar-collapse" :visible="visible">
-        <CNavbarNav class="ms-auto" v-if="isAuthenticated">
-          <CDropdown variant="nav-item" placement="bottom-end">
-            <CDropdownToggle color="secondary" class="nav-link px-2 py-1">
-              Hi, {{ user?.name }}
-            </CDropdownToggle>
-            <CDropdownMenu>
-              <CDropdownItem class="px-2 py-1">
-                <RouterLink :to="{ name: 'profile' }" class="dropdown-item px-0 py-0">Profile</RouterLink>
-              </CDropdownItem>
+      <!-- Always visible user dropdown on the right -->
+      <div class="ms-auto" v-if="isAuthenticated">
+        <div class="dropdown">
+          <button 
+            class="btn btn-light border-0 d-flex align-items-center gap-2 dropdown-toggle" 
+            type="button" 
+            data-bs-toggle="dropdown" 
+            aria-expanded="false"
+          >
+            <span class="fw-semibold">{{ user?.name }}</span>
+          </button>
 
-              <CDropdownDivider />
-              <CDropdownItem @click="logout">Logout</CDropdownItem>
-            </CDropdownMenu>
-          </CDropdown>
-        </CNavbarNav>
-      </CCollapse>
-    </CContainer>
-  </CNavbar>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm rounded-3 p-2 border">
+            <li>
+              <RouterLink :to="{ name: 'profile' }" class="dropdown-item py-2 text-decoration-none text-dark">
+                Profile
+              </RouterLink>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <button @click="logout" class="dropdown-item py-2 text-danger border-0 bg-transparent w-100 text-start">
+                Logout
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import {
-  CNavbar,
-  CContainer,
-  CNavbarToggler,
-  CCollapse,
-  CNavbarNav,
-  CNavItem,
-  CDropdown,
-  CDropdownToggle,
-  CDropdownMenu,
-  CDropdownItem,
-  CDropdownDivider,
-} from '@coreui/vue'
 
-// Accept visible prop from parent to control collapse state
 const props = defineProps({
-  visible: {
+  sidebarVisible: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 })
 
-const emit = defineEmits(['toggleSidebar'])
+const emit = defineEmits(['update:sidebar-visible'])
 
 const router = useRouter()
 const authStore = useAuthStore()
 
 const user = computed(() => authStore.user)
 const isAuthenticated = computed(() => authStore.isAuthenticated && authStore.user.email_verified_at)
+
+const toggleSidebar = () => {
+  console.log('Single toggle called, current:', props.sidebarVisible)
+  emit('update:sidebar-visible', !props.sidebarVisible)
+}
 
 const logout = async () => {
   await authStore.logout()

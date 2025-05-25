@@ -1,1 +1,17 @@
 @import 'nprogress/nprogress.css';
+/* You can put this in App.vue or your main style file */
+/* Override NProgress CSS globally (e.g., in main.css or App.vue) */
+
+/* Hide the progress bar */
+#nprogress .bar {
+    display: none !important;
+}
+
+/* Customize and center the spinner */
+#nprogress .spinner {
+    position: fixed;
+    right: 160px;
+    top:25px;
+    transform: translate(-50%, -50%);
+}
+
