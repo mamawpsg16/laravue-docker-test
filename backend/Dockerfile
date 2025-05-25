@@ -2,6 +2,7 @@ FROM php:8.1-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
+    libpq-dev \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
@@ -9,8 +10,14 @@ RUN apt-get update && apt-get install -y \
     unzip
 
 # Install PHP extensions
+
+
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql gd
+    && docker-php-ext-install pdo pdo_pgsql gd
+
+#MYSQL
+# RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+#     && docker-php-ext-install pdo pdo_mysql gd
 
 # Set working directory
 WORKDIR /var/www/html

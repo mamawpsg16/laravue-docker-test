@@ -11,7 +11,7 @@ services:
     networks:
       - app-network
     depends_on: # Define dependencies for startup order
-      - db
+      - postgres-db
     #  ports: # Removed ports.  Expose in nginx, not here.
     #    - "9000:9000" # PHP-FPM port;  No need to expose this to the host
   
@@ -41,43 +41,61 @@ services:
     networks:
       - app-network
     
-  db: # Using 'db' is fine, but 'database' is also common
-    image: mysql:5.7 # Or a specific version
-    container_name: laravue-docker-mysql-db # Consistent naming
+ 
+  
+  postgres-db:
+    image: postgres:15
+    container_name: laravue-docker-postgres-db
     environment:
-      MYSQL_ROOT_PASSWORD: secret # DO NOT USE 'secret' in production
-      MYSQL_DATABASE: laravel #Should be in .env
-      MYSQL_USER: laravel    #Should be in .env
-      MYSQL_PASSWORD: secret # DO NOT USE 'secret' in production #Should be in .env
-      #  MYSQL_TCP_PORT: 3306 # Explicitly set the port, though it defaults to 3306.
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
     volumes:
-      - dbdata:/var/lib/mysql # Persist database data
+      - pgdata:/var/lib/postgresql/data
     networks:
       - app-network
+
+    
+  # mysql-db: # Using 'mysql-db' is fine, but 'database' is also common
+  #   image: mysql:5.7 # Or a specific version
+  #   container_name: laravue-docker-mysql-db # Consistent naming
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: secret # DO NOT USE 'secret' in production
+  #     MYSQL_DATABASE: laravel #Should be in .env
+  #     MYSQL_USER: laravel    #Should be in .env
+  #     MYSQL_PASSWORD: secret # DO NOT USE 'secret' in production #Should be in .env
+  #     #  MYSQL_TCP_PORT: 3306 # Explicitly set the port, though it defaults to 3306.
+  #   volumes:
+  #     - dbdata:/var/lib/mysql # Persist database data
+  #   networks:
+  #     - app-network
     #ports: #Do not expose the database port to the host
     #  - "3306:3306" # Only needed for direct access (e.g., with a client)
-    
+
   # Add a phpmyadmin service only for development.  Do not use in production.
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: laravue-docker-phpmyadmin
-    ports:
-      - "8001:80"
-    environment:
-      PMA_HOST: db  # Connect to the 'db' service
-      PMA_PORT: 3306
-      PMA_ARBITRARY: 0 #Set to 0 for security
-    depends_on:
-      - db
-    networks:
-      - app-network
+  # phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin
+  #   container_name: laravue-docker-phpmyadmin
+  #   ports:
+  #     - "8001:80"
+  #   environment:
+  #     PMA_HOST: mysql-db  # Connect to the 'mysql-db' service
+  #     PMA_PORT: 3306
+  #     PMA_ARBITRARY: 0 #Set to 0 for security
+  #   depends_on:
+  #     - mysql-db
+  #   networks:
+  #     - app-network
     
 networks:
   app-network:
     driver: bridge # Default bridge network
 
 volumes:
-  dbdata: # Named volume for database persistence
-    driver: local
+  # dbdata: # Named volume for database persistence
+  #   driver: local
   vendor-volume:  # Define a named volume for vendor
     driver: local
+  pgdata:

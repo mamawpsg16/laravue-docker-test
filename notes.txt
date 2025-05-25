@@ -16,3 +16,26 @@ php artisan test
 #USING PHP UNIT DIRECTLY
 ./vendor/bin/phpunit --testsuite=Unit
 ./vendor/bin/phpunit --testsuite=Feature
+
+
+#CONNECT IN POSTGRES IN CMD
+psql -h 127.0.0.1 -p 5432 -U postgres_user -d postgres
+psql -U postgres_user -d postgres
+-h	Specifies the host (server) where PostgreSQL runs
+-U	Specifies the username to connect with
+-d	Specifies the database to connect to
+
+📋 2. List all databases
+\l
+-- or
+\list
+🧭 3. Connect to a database
+\c database_name
+📂 4. List all tables
+\dt
+🧱 5. Show table structure
+\d table_name
+📄 6. Run SQL queries
+SELECT * FROM table_name;
+📤 7. Exit psql
+\q

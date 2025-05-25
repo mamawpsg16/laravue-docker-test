@@ -3,11 +3,9 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router'; // Import the router we defined in router/index.js
 import { createPinia } from 'pinia'; // If you're using Pinia
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import 'bootstrap'; // Optional: import JS for modals, dropdowns, etc.
 import axios from '@/services/axios.js'; // Import axios for HTTP requests
 import '@/assets/scss/main.scss'
-
 
 const app = createApp(App);
 
