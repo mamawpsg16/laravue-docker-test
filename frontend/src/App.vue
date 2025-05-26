@@ -6,7 +6,7 @@
     <!-- Main content -->
     <div 
       class="flex-grow-1 main-content" 
-      :class="{ 'sidebar-open': sidebarVisible }"
+      :class="{ 'sidebar-open': isAuthenticated && sidebarVisible }"
     >
       <AppNavbar 
         :sidebar-visible="sidebarVisible"

@@ -1,17 +1,17 @@
 FROM php:8.1-fpm
 
-# Install system dependencies
+# Install system dependencies including Git
 RUN apt-get update && apt-get install -y \
+    git \
     libpq-dev \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
     zip \
-    unzip
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-
-
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_pgsql gd
 
