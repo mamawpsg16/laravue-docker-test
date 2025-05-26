@@ -151,7 +151,7 @@ function formatLabel(name) {
 
 /* Sidebar on desktop */
 .sidebar-desktop {
-  width: 280px;
+  width: 240px;
   height: 100vh;
   position: fixed;
   top: 0;
@@ -162,7 +162,7 @@ function formatLabel(name) {
 
 /* Sidebar on mobile */
 .sidebar-mobile {
-  width: 250px;
+  width: 200px;
   position: fixed;
   top: 0;
   left: 0;
