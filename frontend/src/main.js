@@ -7,6 +7,7 @@ import 'bootstrap'; // Optional: import JS for modals, dropdowns, etc.
 import axios from '@/services/axios.js'; // Import axios for HTTP requests
 import '@/assets/scss/main.scss'
 
+import Toast from "vue-toastification"
 const app = createApp(App);
 
 // Use Pinia (if you're using it for state management)
@@ -18,7 +19,7 @@ app.use(router);
 // Example: Set a global function
 app.config.globalProperties.$axios = axios; // Make axios available globally (optional, but convenient)
 app.config.globalProperties.$hello = () => 'Hello from global!';
-
+app.use(Toast)
 app.provide('message', 'hello')
 
 app.config.errorHandler = (err, instance, info) => {

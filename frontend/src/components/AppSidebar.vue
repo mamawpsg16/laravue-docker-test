@@ -30,7 +30,7 @@
                 class="nav-link d-flex align-items-center"
                 :class="{ active: isActive('/dashboard') }"
               >
-                <i class="fa-solid fa-house me-2"></i>
+                <i class="bi bi-house-fill me-2"></i>
                 Dashboard
               </RouterLink>
             </li>
@@ -41,7 +41,7 @@
                 class="nav-link d-flex align-items-center"
                 :class="{ active: isActive('/tasks') }"
               >
-                <i class="fa-solid fa-list me-2"></i>
+                <i class="bi bi-list-check me-2"></i>
                 Tasks
               </RouterLink>
             </li>
@@ -53,7 +53,7 @@
                 @click="toggleSubmenu('features')"
                 style="cursor: pointer;"
               >
-                <span><i class="fa-solid fa-star me-2"></i> Features</span>
+                <span><i class="bi bi-lightning-charge-fill me-2"></i> Features</span>
                 <i :class="openSubmenus.features ? 'fa fa-chevron-down' : 'fa fa-chevron-right'"></i>
               </div>
               <ul  v-show="openSubmenus.features"  class="nav flex-column ms-3 submenu">

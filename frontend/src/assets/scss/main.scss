@@ -1,5 +1,7 @@
 @import 'sweetalert';
 @import './_bootstrap';
-@import './fontawesome';   // bootstrap with your custom variables
 @import './nprogress';
 @import './fonts';
+@import './_vue_datepicker';
+@import './_vue_toastification';
+@import './bootstrap_icons';
