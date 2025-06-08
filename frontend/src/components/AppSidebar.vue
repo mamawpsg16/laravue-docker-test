@@ -54,7 +54,7 @@
                 style="cursor: pointer;"
               >
                 <span><i class="bi bi-lightning-charge-fill me-2"></i> Features</span>
-                <i :class="openSubmenus.features ? 'fa fa-chevron-down' : 'fa fa-chevron-right'"></i>
+                <i :class="openSubmenus.features ? 'bi bi-chevron-down' : 'bi bi-chevron-compact-right'"></i>
               </div>
               <ul  v-show="openSubmenus.features"  class="nav flex-column ms-3 submenu">
                 <li 
@@ -151,7 +151,7 @@ function formatLabel(name) {
 
 /* Sidebar on desktop */
 .sidebar-desktop {
-  width: 240px;
+  width: 250px;
   height: 100vh;
   position: fixed;
   top: 0;

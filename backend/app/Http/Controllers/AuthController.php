@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Enums\UserType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -11,31 +12,33 @@ use Illuminate\Auth\Events\Registered;
 class AuthController extends Controller
 {
     // Register new user
-    public function register(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        public function register(Request $request)
+        {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|unique:users',
+                'password' => 'required|string|min:8|confirmed',
+                'user_type' => 'nullable'
+            ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'user_type' => $request->user_type ?? UserType::Client->value,
+            ]);
 
-        event(new Registered($user));
-        
-        // Automatically log in the user after registration
-        Auth::login($user);
+            event(new Registered($user));
+            
+            // Automatically log in the user after registration
+            Auth::login($user);
 
-        // Return response with user data
-        return response()->json([
-            'message' => 'Registration successful!',
-            'user' => $user,
-        ], 201);
-    }
+            // Return response with user data
+            return response()->json([
+                'message' => 'Registration successful!',
+                'user' => $user,
+            ], 201);
+        }
 
     // Login existing user
     public function login(Request $request)
