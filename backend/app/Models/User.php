@@ -21,11 +21,22 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
+    // protected $fillable = [
+    //     'first_name',
+    //     'middle_name',
+    //     'last_name',
+    //     'email',
+    //     'password',
+    //     'birth_date',
+    //     'gender',
+    //     'address',
+    //     'role',
+    // ];
+
+     protected $guarded = [
+        'id'
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -46,23 +57,17 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    // A simple method to create a user
-    public static function createUser($name, $email, $password)
-    {
-        return self::create([
-            'name' => $name,
-            'email' => $email,
-            'password' => bcrypt($password),
-        ]);
-    }
+    protected static function booted(){
+        static::saving(function ($user) {
+            $name = $user->first_name;
 
-    public function address()
-    {
-        return $this->hasOne(UserAddress::class);
-    }
+            if (!empty($user->middle_name)) {
+                $name .= ' ' . $user->middle_name . '.';
+            }
 
-    // public function sendEmailVerificationNotification()
-    // {
-    //     $this->notify(new CustomVerifyEmail);
-    // }
+            $name .= ' ' . $user->last_name;
+
+            $user->name = $name;
+        });
+    }
 }

@@ -18,11 +18,17 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
     
-    return redirect('http://localhost:5174/dashboard');
+    return redirect('http://localhost:5175/dashboard');
 })->middleware(['signed'])->name('verification.verify');
 
 
 Route::post('/register', [AuthController::class, 'register']);
+// Route::get('/register', function () {
+//     dd('GET REGISTER');
+// });
+// Route::post('/register', function(){
+//     dd('register');
+// });
 
 Route::get('/login', function () {
     return redirect('/'); // Or wherever your SPA login route is

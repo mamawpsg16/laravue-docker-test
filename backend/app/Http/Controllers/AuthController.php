@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RegisterFormRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,19 +12,12 @@ use Illuminate\Auth\Events\Registered;
 class AuthController extends Controller
 {
     // Register new user
-    public function register(Request $request)
+    public function register(RegisterFormRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        $data = $request->validated();
+        $data['password']  = Hash::make($data['password']);
+        
+        $user = User::create($data);
 
         event(new Registered($user));
         

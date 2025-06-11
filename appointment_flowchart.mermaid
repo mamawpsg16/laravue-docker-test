@@ -1,0 +1,84 @@
+graph TD
+    A[User Visits Hospital App] --> B{Already Registered?}
+    B -->|No| C[Register/Sign Up]
+    B -->|Yes| D[Login]
+    C --> E[Complete Profile Setup]
+    D --> F{User Role?}
+    E --> F
+    
+    %% Patient Flow
+    F -->|Patient| G[Patient Dashboard]
+    G --> H[Book Appointment]
+    G --> I[My Appointments]
+    G --> J[Medical Records]
+    G --> K[Profile Management]
+    
+    H --> H1[Select Department]
+    H1 --> H2[Choose Service]
+    H2 --> H3[Select Doctor]
+    H3 --> H4[Pick Date & Time]
+    H4 --> H5[Confirm Booking]
+    H5 --> H6[Payment]
+    H6 --> H7[Booking Confirmed]
+    
+    I --> I1[View Upcoming]
+    I --> I2[View Past Appointments]
+    I1 --> I3[Reschedule/Cancel]
+    
+    %% Doctor Flow
+    F -->|Doctor| L[Doctor Dashboard]
+    L --> M[Today's Schedule]
+    L --> N[My Calendar]
+    L --> O[Patient Management]
+    L --> P[Schedule Settings]
+    
+    M --> M1[View Patient Queue]
+    M1 --> M2[Update Appointment Status]
+    
+    N --> N1[Monthly/Weekly View]
+    N1 --> N2[Block/Unblock Slots]
+    
+    P --> P1[Set Working Hours]
+    P1 --> P2[Mark Leave Days]
+    
+    %% Admin Flow
+    F -->|Admin/Receptionist| Q[Admin Dashboard]
+    Q --> R[Manage Appointments]
+    Q --> S[Manage Users]
+    Q --> T[System Settings]
+    Q --> U[Reports]
+    
+    R --> R1[All Appointments View]
+    R1 --> R2[Create/Edit Appointments]
+    R1 --> R3[Handle Cancellations]
+    
+    S --> S1[Manage Patients]
+    S --> S2[Manage Doctors]
+    S --> S3[Manage Staff]
+    
+    T --> T1[Departments]
+    T --> T2[Services]
+    T --> T3[System Config]
+    
+    U --> U1[Appointment Analytics]
+    U --> U2[Revenue Reports]
+    U --> U3[Doctor Performance]
+    
+    %% Notifications (Cross-cutting)
+    H7 --> V[Send Confirmation]
+    M2 --> V
+    R2 --> V
+    V --> W[Email/SMS Notifications]
+    
+    %% Styling
+    classDef patientFlow fill:#e3f2fd,stroke:#1976d2
+    classDef doctorFlow fill:#e8f5e8,stroke:#388e3c
+    classDef adminFlow fill:#fff3e0,stroke:#f57c00
+    classDef systemFlow fill:#f3e5f5,stroke:#7b1fa2
+    classDef navFlow fill:#fce4ec,stroke:#c2185b
+    
+    class G,H,I,J,K,H1,H2,H3,H4,H5,H6,H7,I1,I2,I3 patientFlow
+    class L,M,N,O,P,M1,M2,N1,N2,P1,P2 doctorFlow
+    class Q,R,S,T,U,R1,R2,R3,S1,S2,S3,T1,T2,T3,U1,U2,U3 adminFlow
+    class V,W systemFlow
+    class A,B,C,D,E,F navFlow
