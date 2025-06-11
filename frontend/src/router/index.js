@@ -181,7 +181,6 @@ router.beforeEach(async (to, from, next) => {
   }
 
   const isAuthenticated = authStore.isAuthenticated; // Get current auth status
-
   // 🛑 If the user is already logged in and trying to visit login or register
   if ((to.name === 'login' || to.name === 'register') && isAuthenticated) {
     next({ name: 'dashboard' }); // Redirect them to the dashboard

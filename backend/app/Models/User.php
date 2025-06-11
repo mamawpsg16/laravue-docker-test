@@ -34,7 +34,22 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */
-    protected $guarded = ['id'];
+    // protected $fillable = [
+    //     'first_name',
+    //     'middle_name',
+    //     'last_name',
+    //     'email',
+    //     'password',
+    //     'birth_date',
+    //     'gender',
+    //     'address',
+    //     'role',
+    // ];
+
+     protected $guarded = [
+        'id'
+    ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -56,81 +71,17 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    // A simple method to create a user
-    public static function createUser($name, $email, $password)
-    {
-        return self::create([
-            'name' => $name,
-            'email' => $email,
-            'password' => bcrypt($password),
-        ]);
-    }
-
-    // Validation rules
-    public static function validationRules()
-    {
-        return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'phone' => 'nullable|string|max:20',
-            'user_type' => 'required|in:' . implode(',', self::VALID_USER_TYPES),
-            'is_active' => 'boolean',
-        ];
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
+    protected static function booted(){
         static::saving(function ($user) {
-            if (!in_array($user->user_type, self::VALID_USER_TYPES)) {
-                throw new \InvalidArgumentException('Invalid user type: ' . $user->user_type);
+            $name = $user->first_name;
+
+            if (!empty($user->middle_name)) {
+                $name .= ' ' . $user->middle_name . '.';
             }
+
+            $name .= ' ' . $user->last_name;
+
+            $user->name = $name;
         });
     }
-
-
-    // Role checking methods (same as before)
-    public function isAdmin() { return $this->user_type === self::USER_TYPE_ADMIN; }
-    public function isProvider() { return $this->user_type === self::USER_TYPE_PROVIDER; }
-    public function isClient() { return $this->user_type === self::USER_TYPE_CLIENT; }
-
-    public function address()
-    {
-        return $this->hasOne(UserAddress::class);
-    }
-
-     // Relationships 
-     // User can be a provider
-     public function provider()
-     {
-         return $this->hasOne(Provider::class);
-     }
- 
-     public function clientAppointments()
-     {
-         return $this->hasMany(Appointment::class, 'client_id');
-     }
- 
-     // Scopes
-     public function scopeProviders($query)
-     {
-         return $query->where('user_type', 'provider');
-     }
- 
-     public function scopeClients($query)
-     {
-         return $query->where('user_type', 'client');
-     }
- 
-     public function scopeActive($query)
-     {
-         return $query->where('is_active', true);
-     }
-
-    // public function sendEmailVerificationNotification()
-    // {
-    //     $this->notify(new CustomVerifyEmail);
-    // }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="d-flex">
+  <div id="app">
     <!-- Sidebar shown only if authenticated -->
     <AppSidebar v-if="isAuthenticated" v-model:visible="sidebarVisible" />
 
@@ -12,7 +12,8 @@
         :sidebar-visible="sidebarVisible"
         @update:sidebar-visible="sidebarVisible = $event"
       />
-      <main class="p-3">
+      <main>
+        
         <router-view />
       </main>
     </div>
@@ -23,22 +24,14 @@
 import AppSidebar from '@/components/AppSidebar.vue'
 import AppNavbar from '@/components/AppNavbar.vue'
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore()
 
-const isAuthenticated = computed(() => authStore.isAuthenticated && authStore.user?.email_verified_at)
+const isAuthenticated = computed(() => authStore.isAuthenticated)
 
 const sidebarVisible = ref(window.innerWidth >= 992)
 const isManualToggle = ref(false)
-
-const toggleSidebar = () => {
-  sidebarVisible.value = !sidebarVisible.value
-  isManualToggle.value = true
-  setTimeout(() => {
-    isManualToggle.value = false
-  }, 300)
-}
 
 const handleResize = () => {
   if (isManualToggle.value) return
@@ -46,6 +39,7 @@ const handleResize = () => {
 }
 
 onMounted(() => {
+  console.log('ON MOUNTED');
   authStore.fetchUser()
   window.addEventListener('resize', handleResize)
 })

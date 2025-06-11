@@ -15,20 +15,22 @@ async function login(credentials) {
     user.value = response.data.user;
     return response;
   } catch (error) {
-    throw new Error('Invalid credentials');
+    throw error;
   }
 }
 
 async function register(userData) {
   try {
+    console.log('YIPPIEE');
     await api.get('/sanctum/csrf-cookie');
     const response = await api.post('/register', userData);
+    console.log(response,'response');
 
     isAuthenticated.value = true;
     user.value = response.data.user;
     return response;
   } catch (error) {
-    throw new Error('Registration failed');
+    throw error;
   }
 }
 
@@ -47,9 +49,11 @@ function setAuthenticated(status) {
 }
 
 async function fetchUser() {
+  
   isLoading.value = true;
   try {
     const response = await api.get('/api/user');
+    console.log(response,'fetch user response');
     isAuthenticated.value = true;
     user.value = response.data;
   } catch (error) {

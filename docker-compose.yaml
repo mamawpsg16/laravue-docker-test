@@ -21,7 +21,7 @@ services:
       dockerfile: Dockerfile.vue
     container_name: laravue-docker-frontend
     ports:
-      - "5174:5174"  # Host port 5175 maps to container port 5174
+      - "5175:5174"  # Host port 5175 maps to container port 5174
     volumes:
       - ./frontend:/app
       - /app/node_modules  # Avoid host-container conflicts

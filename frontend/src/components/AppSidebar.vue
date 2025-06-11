@@ -54,7 +54,7 @@
                 style="cursor: pointer;"
               >
                 <span><i class="bi bi-lightning-charge-fill me-2"></i> Features</span>
-                <i :class="openSubmenus.features ? 'bi bi-chevron-down' : 'bi bi-chevron-compact-right'"></i>
+                <i :class="openSubmenus.features ? 'bi bi-chevron-compact-down' : 'bi bi-chevron-compact-right'"></i>
               </div>
               <ul  v-show="openSubmenus.features"  class="nav flex-column ms-3 submenu">
                 <li 
