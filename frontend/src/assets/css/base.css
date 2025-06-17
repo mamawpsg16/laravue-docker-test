@@ -1,91 +1,439 @@
-/* @import './_bootstrap.scss';
-@import './_coreui.scss'; */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+/* ================================
+   CUSTOM CSS CLASSES FOR REUSABILITY
+   ================================ */
 
-/* color palette from <https://github.com/vuejs/theme> */
-:root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
-
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
-
-  --vt-c-indigo: #2c3e50;
-
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
-
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+/* Container & Layout Classes */
+.page-container {
+  /* Equivalent to: main-container (assuming it's a wrapper) */
+  @apply w-full p-12;
 }
 
-/* semantic color variables for this project */
-:root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
-
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
-
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
-
-  --section-gap: 160px;
+.content-card {
+  /* Equivalent to: border rounded-lg border-gray-200 mb-6 */
+  @apply border rounded-lg border-gray-200 mb-6;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
+.card-header {
+  /* Equivalent to: border-b border-gray-200 p-6 mb-6 */
+  @apply border-b border-gray-200 p-6 mb-6;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  font-weight: normal;
+.header-content {
+  /* Equivalent to: flex justify-between items-center */
+  @apply flex justify-between items-center;
 }
 
-body {
-  min-height: 100vh;
-  color: var(--color-text);
-  background: var(--color-background);
-  transition:
-    color 0.5s,
-    background-color 0.5s;
-  line-height: 1.6;
-  font-family:
-    'Ancizar Serif'
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    sans-serif;
-  font-size: 15px;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Typography Classes */
+.page-title {
+  /* Equivalent to: text-2xl font-bold text-gray-900 */
+  @apply text-2xl font-bold text-gray-900;
+}
+
+.page-subtitle {
+  /* Equivalent to: text-gray-600 mt-1 */
+  @apply text-gray-600 mt-1;
+}
+
+.section-label {
+  /* Equivalent to: text-sm font-medium text-gray-600 */
+  @apply text-sm font-medium text-gray-600;
+}
+
+.section-value {
+  /* Equivalent to: text-2xl font-bold text-gray-900 */
+  @apply text-2xl font-bold text-gray-900;
+}
+
+/* Button Classes */
+.btn-primary {
+  /* Equivalent to: bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors */
+  @apply bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors;
+}
+
+.btn-secondary {
+  /* Equivalent to: px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 */
+  @apply px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.btn-submit {
+  /* Equivalent to: px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 */
+  @apply px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50;
+}
+
+/* Stats Card Classes */
+.stats-grid {
+  /* Equivalent to: grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 (for departments) */
+  @apply grid grid-cols-1 md:grid-cols-3 gap-6 mb-6;
+}
+
+.stats-grid-4 {
+  /* Equivalent to: grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 (for departments) */
+  @apply grid grid-cols-1 md:grid-cols-4 gap-6 mb-6;
+}
+
+.stats-grid-4 {
+  /* Equivalent to: grid grid-cols-1 md:grid-cols-4 gap-6 mb-6 (for services) */
+  @apply grid grid-cols-1 md:grid-cols-4 gap-6 mb-6;
+}
+
+.stat-card {
+  /* Equivalent to: bg-white rounded-lg shadow-sm p-6 */
+  @apply bg-white rounded-lg shadow-sm p-6;
+}
+
+.stat-card-content {
+  /* Equivalent to: flex items-center */
+  @apply flex items-center;
+}
+
+.stat-icon-wrapper {
+  /* Base class for icon containers */
+  @apply p-3 rounded-lg;
+}
+
+.stat-icon-blue {
+  /* Equivalent to: p-3 bg-blue-100 rounded-lg */
+  @apply p-3 bg-blue-100 rounded-lg;
+}
+
+.stat-icon-green {
+  /* Equivalent to: p-3 bg-green-100 rounded-lg */
+  @apply p-3 bg-green-100 rounded-lg;
+}
+
+.stat-icon-orange {
+  /* Equivalent to: p-3 bg-orange-100 rounded-lg */
+  @apply p-3 bg-orange-100 rounded-lg;
+}
+
+.stat-icon-red {
+  /* Equivalent to: p-3 bg-orange-100 rounded-lg */
+  @apply p-3 bg-red-100 rounded-lg;
+}
+.stat-icon-purple {
+  /* Equivalent to: p-3 bg-purple-100 rounded-lg */
+  @apply p-3 bg-purple-100 rounded-lg;
+}
+
+.stat-icon {
+  /* Equivalent to: w-6 h-6 */
+  @apply w-6 h-6;
+}
+
+.stat-icon-blue-text {
+  /* Equivalent to: w-6 h-6 text-blue-600 */
+  @apply w-6 h-6 text-blue-600;
+}
+
+.stat-icon-green-text {
+  /* Equivalent to: w-6 h-6 text-green-600 */
+  @apply w-6 h-6 text-green-600;
+}
+
+.stat-icon-orange-text {
+  /* Equivalent to: w-6 h-6 text-orange-600 */
+  @apply w-6 h-6 text-orange-600;
+}
+
+.stat-icon-purple-text {
+  /* Equivalent to: w-6 h-6 text-purple-600 */
+  @apply w-6 h-6 text-purple-600;
+}
+
+.stat-details {
+  /* Equivalent to: ml-4 */
+  @apply ml-4;
+}
+
+/* Search and Filter Classes */
+.search-filter-card {
+  /* Equivalent to: bg-white rounded-lg shadow-sm p-6 mb-6 */
+  @apply bg-white rounded-lg shadow-sm p-6 mb-6;
+}
+
+.search-filter-grid {
+  /* Equivalent to: flex flex-col sm:flex-row gap-4 (departments) */
+  @apply flex flex-col sm:flex-row gap-4;
+}
+
+.search-filter-grid-lg {
+  /* Equivalent to: flex flex-col lg:flex-row gap-4 (services) */
+  @apply flex flex-col lg:flex-row gap-4;
+}
+
+.search-input-wrapper {
+  /* Equivalent to: flex-1 */
+  @apply flex-1;
+}
+
+.filter-select-wrapper {
+  /* Equivalent to: w-full sm:w-48 */
+  @apply w-full sm:w-48;
+}
+
+.filter-select-wrapper-lg {
+  /* Equivalent to: w-full lg:w-48 */
+  @apply w-full lg:w-48;
+}
+
+.filter-select-wrapper-sm {
+  /* Equivalent to: w-full lg:w-40 */
+  @apply w-full lg:w-40;
+}
+
+.filter-select {
+  /* Equivalent to: w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 */
+  @apply w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+/* Table Classes */
+.data-table-card {
+  /* Equivalent to: bg-white rounded-lg shadow-sm overflow-hidden */
+  @apply bg-white rounded-lg shadow-sm overflow-hidden;
+}
+
+.data-table-wrapper {
+  /* Equivalent to: overflow-x-auto */
+  @apply overflow-x-auto;
+}
+
+.data-table {
+  /* Equivalent to: min-w-full divide-y divide-gray-200 */
+  @apply min-w-full divide-y divide-gray-200;
+}
+
+.table-header {
+  /* Equivalent to: bg-gray-50 */
+  @apply bg-gray-50;
+}
+
+.table-header-cell {
+  /* Equivalent to: px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider */
+  @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+}
+
+.table-header-cell-right {
+  /* Equivalent to: px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider */
+  @apply px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider;
+}
+
+.table-body {
+  /* Equivalent to: bg-white divide-y divide-gray-200 */
+  @apply bg-white divide-y divide-gray-200;
+}
+
+.table-row {
+  /* Equivalent to: hover:bg-gray-50 */
+  @apply hover:bg-gray-50;
+}
+
+.table-cell {
+  /* Equivalent to: px-6 py-4 whitespace-nowrap */
+  @apply px-6 py-4 whitespace-nowrap;
+}
+
+.table-cell-right {
+  /* Equivalent to: px-6 py-4 whitespace-nowrap text-right text-sm font-medium */
+  @apply px-6 py-4 whitespace-nowrap text-right text-sm font-medium;
+}
+
+/* Avatar/Icon Classes */
+.item-avatar-wrapper {
+  /* Equivalent to: flex items-center */
+  @apply flex items-center;
+}
+
+.item-avatar {
+  /* Equivalent to: flex-shrink-0 h-10 w-10 */
+  @apply flex-shrink-0 h-10 w-10;
+}
+
+.item-avatar-circle {
+  /* Equivalent to: h-10 w-10 rounded-lg flex items-center justify-center */
+  @apply h-10 w-10 rounded-lg flex items-center justify-center;
+}
+
+.item-avatar-blue {
+  /* Equivalent to: h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center */
+  @apply h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center;
+}
+
+.item-avatar-purple {
+  /* Equivalent to: h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center */
+  @apply h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center;
+}
+
+.item-avatar-text {
+  /* Equivalent to: font-medium text-sm */
+  @apply font-medium text-sm;
+}
+
+.item-avatar-text-blue {
+  /* Equivalent to: text-blue-600 font-medium text-sm */
+  @apply text-blue-600 font-medium text-sm;
+}
+
+.item-avatar-text-purple {
+  /* Equivalent to: text-purple-600 font-medium text-sm */
+  @apply text-purple-600 font-medium text-sm;
+}
+
+.item-details {
+  /* Equivalent to: ml-4 */
+  @apply ml-4;
+}
+
+.item-name {
+  /* Equivalent to: text-sm font-medium text-gray-900 */
+  @apply text-sm font-medium text-gray-900;
+}
+
+.item-code {
+  /* Equivalent to: text-sm text-gray-500 */
+  @apply text-sm text-gray-500;
+}
+
+.item-info {
+  /* Equivalent to: text-sm text-gray-900 */
+  @apply text-sm text-gray-900;
+}
+
+/* Status Badge Classes */
+.status-badge {
+  /* Base class for status badges */
+  @apply inline-flex px-2 py-1 text-xs font-semibold rounded-full;
+}
+
+.status-badge-active {
+  /* Equivalent to: inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 */
+  @apply inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800;
+}
+
+.status-badge-inactive {
+  /* Equivalent to: inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 */
+  @apply inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800;
+}
+
+.status-badge-warning {
+  /* Equivalent to: inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 */
+  @apply inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800;
+}
+
+.status-badge-info {
+  /* Equivalent to: inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 */
+  @apply inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800;
+}
+
+/* Action Button Classes */
+.action-buttons {
+  /* Equivalent to: flex justify-end gap-2 */
+  @apply flex justify-end gap-2;
+}
+
+.action-btn {
+  /* Base class for action buttons */
+  @apply p-1 rounded;
+}
+
+.action-btn-edit {
+  /* Equivalent to: text-blue-600 hover:text-blue-900 p-1 rounded */
+  @apply text-blue-600 hover:text-blue-900 p-1 rounded;
+}
+
+.action-btn-delete {
+  /* Equivalent to: text-red-600 hover:text-red-900 p-1 rounded */
+  @apply text-red-600 hover:text-red-900 p-1 rounded;
+}
+
+.action-icon {
+  /* Equivalent to: w-4 h-4 */
+  @apply w-4 h-4;
+}
+
+.action-icon-lg {
+  /* Equivalent to: w-5 h-5 */
+  @apply w-5 h-5;
+}
+
+/* Modal Classes */
+.modal-header {
+  /* Equivalent to: px-6 py-4 border-b border-gray-200 */
+  @apply px-6 py-4 border-b border-gray-200;
+}
+
+.modal-title {
+  /* Equivalent to: text-lg font-medium text-gray-900 */
+  @apply text-lg font-medium text-gray-900;
+}
+
+.modal-form {
+  /* Equivalent to: p-6 */
+  @apply p-6;
+}
+
+.modal-footer {
+  /* Equivalent to: flex justify-end gap-3 mt-2 pt-6 border-t border-gray-200 */
+  @apply flex justify-end gap-3 mt-2 pt-6 border-t border-gray-200;
+}
+
+.modal-footer-alt {
+  /* Equivalent to: flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200 */
+  @apply flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200;
+}
+
+/* Toggle Switch Classes */
+.toggle-switch {
+  /* Equivalent to: relative inline-flex h-6 w-11 items-center rounded-full cursor-pointer transition-colors */
+  @apply relative inline-flex h-6 w-11 items-center rounded-full cursor-pointer transition-colors;
+}
+
+.toggle-switch-active {
+  /* Equivalent to: bg-blue-600 */
+  @apply bg-blue-600;
+}
+
+.toggle-switch-inactive {
+  /* Equivalent to: bg-gray-300 */
+  @apply bg-gray-300;
+}
+
+.toggle-switch-handle {
+  /* Equivalent to: inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ease-in-out */
+  @apply inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ease-in-out;
+}
+
+.toggle-switch-handle-active {
+  /* Equivalent to: translate-x-6 */
+  @apply translate-x-6;
+}
+
+.toggle-switch-handle-inactive {
+  /* Equivalent to: translate-x-1 */
+  @apply translate-x-1;
+}
+
+/* Utility Classes */
+.requirements-badges {
+  /* Equivalent to: flex flex-col gap-1 */
+  @apply flex flex-col gap-1;
+}
+
+.time-input {
+  /* Equivalent to: text-xs border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 w-full sm:w-auto min-w-0 flex-shrink-0 */
+  @apply text-xs border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 w-full sm:w-auto min-w-0 flex-shrink-0;
+}
+
+.time-separator {
+  /* Equivalent to: text-xs text-gray-500 whitespace-nowrap flex-shrink-0 */
+  @apply text-xs text-gray-500 whitespace-nowrap flex-shrink-0;
+}
+
+/* Responsive padding utilities */
+.responsive-padding {
+  /* Equivalent to: px-4 sm:px-6 lg:px-8 */
+  @apply px-4 sm:px-6 lg:px-8;
 }

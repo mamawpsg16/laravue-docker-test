@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RegisterFormRequest;
 use App\Models\User;
+use App\Enums\UserType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -11,31 +13,24 @@ use Illuminate\Auth\Events\Registered;
 class AuthController extends Controller
 {
     // Register new user
-    public function register(Request $request)
+    public function register(RegisterFormRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        event(new Registered($user));
+        $data = $request->validated();
+        $data['password']  = Hash::make($data['password']);
         
-        // Automatically log in the user after registration
-        Auth::login($user);
+        $user = User::create($data);
 
-        // Return response with user data
-        return response()->json([
-            'message' => 'Registration successful!',
-            'user' => $user,
-        ], 201);
-    }
+            // event(new Registered($user));
+            
+            // Automatically log in the user after registration
+            Auth::login($user);
+
+            // Return response with user data
+            return response()->json([
+                'message' => 'Registration successful!',
+                'user' => $user,
+            ], 201);
+        }
 
     // Login existing user
     public function login(Request $request)
@@ -74,7 +69,8 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         // Invalidate the user's session (Sanctum session-based)
-        Auth::logout();
+        // Auth::logout();
+        Auth::guard('web')->logout();
 
         // Also invalidate the Sanctum session cookie
         $request->session()->invalidate();

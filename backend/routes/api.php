@@ -3,39 +3,98 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\AvailabilityController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SearchController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
+| All routes here are prefixed with /api and grouped under middleware.
+| Your frontend will use /api/v1/... for all API calls.
 |
 */
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', [AuthController::class, 'user']);
+Route::prefix('v1')->group(function () {
 
- 
-    Route::post('/email/verification-notification', function (Request $request) {
-        if ($request->user()->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email already verified.']);
-        }
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
 
-        $request->user()->sendEmailVerificationNotification();
+    // Authenticated routes (IMPORTANT: includes 'web' for session auth)
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/user', [AuthController::class, 'user']);
 
-        return response()->json(['message' => 'Verification link sent!']);
-    })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+        Route::post('/email/verification-notification', function (Request $request) {
+            if ($request->user()->hasVerifiedEmail()) {
+                return response()->json(['message' => 'Email already verified.']);
+            }
 
-    //  Your other API routes that require authentication go here
-    // Route::get('/users', [YourController::class, 'index']);
-    // Route::get('/users/{id}', [YourController::class, 'show']);
-    // Route::post('/users', [YourController::class, 'store']);
-    // Route::put('/users/{id}', [YourController::class, 'update']);
-    // Route::delete('/users/{id}', [YourController::class, 'destroy']);
+            $request->user()->sendEmailVerificationNotification();
+            return response()->json(['message' => 'Verification link sent!']);
+        })->middleware('throttle:6,1')->name('verification.send');
+
+        // Profile routes
+        Route::get('/profile', [ProfileController::class, 'show']);
+        Route::put('/profile', [ProfileController::class, 'update']);
+
+        // Department routes
+        Route::apiResource('departments', DepartmentController::class);
+        Route::get('/departments/{department}/services', [DepartmentController::class, 'services']);
+        Route::get('/departments/{department}/doctors', [DepartmentController::class, 'doctors']);
+
+        // Service routes
+        Route::apiResource('services', ServiceController::class);
+
+        // Doctor routes
+        Route::apiResource('doctors', DoctorController::class);
+        Route::get('/doctors/{doctor}/availability', [DoctorController::class, 'availability']);
+        Route::get('/doctors/{doctor}/schedule', [DoctorController::class, 'schedule']);
+        Route::post('/doctors/{doctor}/schedule', [DoctorController::class, 'updateSchedule']);
+        Route::get('/doctors/{doctor}/leaves', [DoctorController::class, 'leaves']);
+        Route::post('/doctors/{doctor}/leaves', [DoctorController::class, 'createLeave']);
+
+        // Appointment routes
+        Route::apiResource('appointments', AppointmentController::class);
+        Route::get('/appointments/{appointment}/history', [AppointmentController::class, 'history']);
+        Route::patch('/appointments/{appointment}/confirm', [AppointmentController::class, 'confirm']);
+        Route::patch('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel']);
+        Route::patch('/appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule']);
+        Route::patch('/appointments/{appointment}/complete', [AppointmentController::class, 'complete']);
+
+        // Availability and scheduling
+        Route::get('/availability', [AvailabilityController::class, 'index']);
+        Route::get('/availability/slots', [AvailabilityController::class, 'getAvailableSlots']);
+
+        // Dashboard routes
+        Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
+        Route::get('/dashboard/appointments/today', [DashboardController::class, 'todayAppointments']);
+        Route::get('/dashboard/appointments/upcoming', [DashboardController::class, 'upcomingAppointments']);
+
+        // Notification routes
+        Route::get('/notifications', [NotificationController::class, 'index']);
+        Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead']);
+        Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+
+        // Search routes
+        Route::get('/search/doctors', [SearchController::class, 'doctors']);
+        Route::get('/search/appointments', [SearchController::class, 'appointments']);
+        Route::get('/search/patients', [SearchController::class, 'patients']);
+
+        // Admin-only Reports
+        Route::middleware('role:admin')->group(function () {
+            Route::get('/reports/appointments', [ReportController::class, 'appointments']);
+            Route::get('/reports/revenue', [ReportController::class, 'revenue']);
+            Route::get('/reports/doctors', [ReportController::class, 'doctors']);
+            Route::get('/reports/departments', [ReportController::class, 'departments']);
+        });
+    });
 });
-
-

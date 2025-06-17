@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with default config
 const instance = axios.create({
-  baseURL: 'http://localhost:8002',
+  baseURL: 'http://localhost:8002/api/v1',
   withCredentials: true, // Important for sending cookies
   withXSRFToken: true,
   headers: {

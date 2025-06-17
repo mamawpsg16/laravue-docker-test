@@ -4,75 +4,80 @@
       <!-- Backdrop for mobile -->
       <div 
         v-if="props.visible && isMobile" 
-        class="sidebar-backdrop"
+        class="fixed inset-0 bg-black bg-opacity-50 z-40"
         @click="emit('update:visible', false)"
       ></div>
 
-      <!-- Sidebar with transition -->
+      <!-- Sidebar -->
       <Transition name="slide-sidebar" appear>
         <nav 
           v-if="props.visible"
-          class="sidebar d-flex flex-column vh-100"
+          class="sidebar flex flex-col h-screen"
           :class="{ 'sidebar-desktop': !isMobile, 'sidebar-mobile': isMobile }"
           @click.stop
-          aria-label="Main sidebar navigation"
         >
           <!-- Brand/logo -->
-          <div class="sidebar-brand d-flex justify-content-center align-items-center px-3 mt-3 mb-4">
-            <img src="@/assets/images/xero.svg" alt="Logo" width="120" />
+          <div class="flex flex-col px-3 pt-6 pb-1 border-b border-gray-200">
+            <div class="flex flex-col items-center grow">
+              <img src="@/assets/images/xero.svg" alt="User Profile" class="h-24 w-24 rounded-full object-cover" />
+              <div class="flex-grow" />
+              <p class="text-lg font-medium">{{ user }}</p>
+            </div>
           </div>
 
           <!-- Navigation links -->
-          <ul class="nav flex-column px-3">
-            <li class="nav-item mb-2">
+          <ul class="flex flex-col px-3 py-4 space-y-1">
+            <li v-for="link in mainLinks" :key="link.path">
               <RouterLink 
-                to="/dashboard"
-                class="nav-link d-flex align-items-center"
-                :class="{ active: isActive('/dashboard') }"
+                :to="link.path"
+                class="nav-link flex items-center"
+                :class="{ active: isActive(link.path) }"
               >
-                <i class="fa-solid fa-house me-2"></i>
-                Dashboard
+                <i v-if="link.meta?.icon" :class="`${link.meta.icon} mr-3 text-base`"></i>
+                <span class="text-base font-medium">{{ formatLabel(link.name) }}</span>
               </RouterLink>
             </li>
 
-            <li class="nav-item mb-2">
-              <RouterLink 
-                to="/tasks"
-                class="nav-link d-flex align-items-center"
-                :class="{ active: isActive('/tasks') }"
-              >
-                <i class="fa-solid fa-list me-2"></i>
-                Tasks
-              </RouterLink>
-            </li>
-
-            <!-- Features with dynamic submenu -->
-            <li class="nav-item mb-2">
+            <!-- System Admin Menu -->
+            <li>
               <div
-                class="nav-link d-flex align-items-center justify-content-between mb-1"
-                @click="toggleSubmenu('features')"
-                style="cursor: pointer;"
+                class="nav-link flex items-center justify-between cursor-pointer"
+                @click="toggleSubmenu('system_admin')"
               >
-                <span><i class="fa-solid fa-star me-2"></i> Features</span>
-                <i :class="openSubmenus.features ? 'fa fa-chevron-down' : 'fa fa-chevron-right'"></i>
+                <span class="flex items-center">
+                  <i class="bi bi-person-fill-lock mr-3 text-base"></i>
+                  <span class="text-base font-medium">System Admin</span>
+                </span>
+                <i 
+                  class="text-sm transition-transform duration-200"
+                  :class="openSubmenus.system_admin ? 'bi bi-chevron-down' : 'bi bi-chevron-right'"
+                ></i>
               </div>
-              <ul  v-show="openSubmenus.features"  class="nav flex-column ms-3 submenu">
+              <ul v-show="openSubmenus.system_admin" class="flex flex-col ml-6 mt-1 space-y-1 submenu">
                 <li 
-                  v-for="child in featuresChildren" 
-                  :key="child.path" 
-                  class="nav-item mb-1"
+                  v-for="child in systemAdminChildren" 
+                  :key="child.path"
                 >
                   <RouterLink 
-                    :to="`/features/${child.path}`"
-                    class="nav-link"
-                    :class="{ active: isActive(`/features/${child.path}`) }"
+                    :to="`/system-admin/${child.path}`"
+                    class="nav-link block flex items-center"
+                    :class="{ active: isActive(`/system-admin/${child.path}`) }"
                   >
-                    {{ formatLabel(child.name) }}
+                    <i v-if="child.meta?.icon" :class="`${child.meta.icon} mr-2 text-sm`"></i>
+                    <span class="text-sm font-medium">{{ formatLabel(child.name) }}</span>
                   </RouterLink>
                 </li>
               </ul>
             </li>
           </ul>
+
+          <!-- Logout -->
+          <button
+            @click="logout"
+            class="mt-auto m-3 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Logout
+          </button>
         </nav>
       </Transition>
     </div>
@@ -80,146 +85,120 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const props = defineProps({
-  visible: {
-    type: Boolean,
-    required: true
-  }
+  visible: Boolean
 })
 const emit = defineEmits(['update:visible'])
 
 const route = useRoute()
 const router = useRouter()
 
-// Detect if mobile (window width < 992px)
-const isMobile = computed(() => window.innerWidth < 992)
+const isMobile = ref(window.innerWidth < 992)
 
-// Function to check active route for link styling
-const isActive = (path) => route.path === path
+const handleResize = () => {
+  isMobile.value = window.innerWidth < 992
+}
 
-// Submenu open/close state
-const openSubmenus = ref({
-  features: false
+onMounted(() => {
+  handleResize()
+  window.addEventListener('resize', handleResize)
 })
 
-// Toggle submenu visibility
+const isActive = (path) => route.path === path
+
+const openSubmenus = ref({
+  features: false,
+  system_admin: false
+})
 function toggleSubmenu(key) {
   openSubmenus.value[key] = !openSubmenus.value[key]
 }
 
-// Retrieve children routes for 'features'
-const featuresChildren = computed(() => {
-  const featuresRoute = router.options.routes.find(r => r.path === '/features')
-  return featuresRoute && featuresRoute.children ? featuresRoute.children : []
+const mainLinks = computed(() => {
+  return router.options.routes.filter(r => 
+    r.meta?.requiresAuth && !r.children
+  )
 })
 
-// Format route name for display
+const systemAdminChildren = computed(() => {
+  const systemAdminRoute = router.options.routes.find(r => r.path === '/system-admin')
+  return systemAdminRoute?.children || []
+})
+
 function formatLabel(name) {
   return name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
 }
+
+const authStore = useAuthStore();
+const user = authStore.user.full_name;
+const logout = async () => {
+  await authStore.logout()
+  router.push({ name: 'login' })
+}
+
+// Auto-close sidebar on mobile route change
+watch(() => route.path, () => {
+  if (isMobile.value) emit('update:visible', false)
+})
 </script>
 
 <style scoped>
-/* Sidebar wrapper fills viewport height */
 .sidebar-wrapper {
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
-  z-index: 1050;
+  z-index: 50;
 }
 
-/* Backdrop for mobile overlay */
-.sidebar-backdrop {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0,0,0,0.5);
-  z-index: 1040;
-}
-
-/* Base sidebar styles */
 .sidebar {
-  background-color: #f8f9fa;
-  color: #212529;
-  overflow-y: auto;
-  box-shadow: 0 2px 12px rgb(0 0 0 / 0.1);
+  @apply bg-gray-50 text-gray-800 overflow-y-auto shadow-xl;
   transition: transform 0.3s ease-in-out;
 }
 
-/* Sidebar on desktop */
 .sidebar-desktop {
-  width: 240px;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
+  @apply w-64 h-screen fixed top-0 left-0 z-50;
   transform: translateX(0) !important;
-  z-index: 1050;
 }
 
-/* Sidebar on mobile */
 .sidebar-mobile {
-  width: 200px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  z-index: 1051;
+  @apply w-52 fixed top-0 left-0 h-screen z-50;
 }
 
-/* Brand/logo */
-.sidebar-brand img {
-  max-width: 100%;
-}
-
-/* Navigation link styles */
 .nav-link {
-  color: #495057;
-  font-weight: 500;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
-  transition: background-color 0.2s ease;
+  @apply text-gray-700 font-normal py-3 px-3 rounded-lg transition-all duration-200;
 }
 
 .nav-link:hover {
-  background-color: #e9ecef;
-  color: #212529;
-  text-decoration: none;
+  @apply bg-gray-100 text-gray-900 no-underline;
 }
 
 .nav-link.active {
-  background-color: #0d6efd;
-  color: white !important;
+  @apply bg-blue-500 text-white shadow-sm;
 }
 
-/* Submenu styling */
 .submenu {
-  padding-left: 1rem;
-  transition: all 0.3s ease;
+  @apply transition-all duration-300;
 }
 
 .submenu .nav-link {
-  font-size: 0.9rem;
-  padding-left: 1.5rem;
+  @apply py-2.5 px-3 rounded-md;
 }
 
-/* Transition classes for sidebar slide-in/out */
 .slide-sidebar-enter-active,
 .slide-sidebar-leave-active {
   transition: transform 0.3s ease-in-out;
 }
-
 .slide-sidebar-enter-from,
 .slide-sidebar-leave-to {
   transform: translateX(-100%);
 }
-
 .slide-sidebar-enter-to,
 .slide-sidebar-leave-from {
   transform: translateX(0);
 }
-
 </style>

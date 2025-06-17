@@ -1,55 +1,65 @@
-<!-- components/BaseInput.vue -->
 <template>
-  <div class="mb-3">
-    <label class="form-label" v-if="label" :for="transformedLabel">{{ label }}</label>
     <input
+      v-bind="$attrs" 
       :type="type"
-      v-model="newModelValue"
-      class="form-control"
-      :placeholder="placeholder"
-      :required="required"
-      :autocomplete="autocomplete"
-      :name="name"
+      v-model="modelValue"
+      :disabled="disabled"
+      :readonly="readonly"
+     :class="[
+        type === 'checkbox'
+          ? 'h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
+          : 'w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none mb-3',
+        {
+          'border-gray-300  focus:ring-2 focus:ring-blue-500': !hasFrontendError && !hasBackendError,
+          'border-red-500': hasFrontendError || hasBackendError
+        },
+        $attrs.class // ← allow user-defined class to override
+      ]"
     />
-    <!-- <input
-      :type="type"
-      :value="modelValue"
-      class="form-control"
-      :placeholder="placeholder"
-      :required="required"
-      :autocomplete="autocomplete"
-      :name="name"
-      @input="updateValue($event.target.value)"
-    /> -->
-  </div>
+    <!-- Multiple or single frontendError display -->
+    <div v-if="hasFrontendError" class="mt-0.5 text-xs text-red-600 space-y-0"> 
+      <div v-for="(err, index) in frontendErrors" :key="index">
+        {{ err }}
+      </div>
+    </div>
+
+    <div v-if="hasBackendError" class="mt-0.5 text-xs text-red-600 space-y-0"> <!-- reduced from mt-1, text-sm, space-y-0.5 -->
+      <div v-for="(err, index) in backendError" :key="index">
+        {{ err }}
+      </div>
+    </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue'
 
-// Define the v-model binding with type support (string or number)
-const newModelValue = defineModel<string | number>()
-
-// Define other props with types and defaults
-const props = withDefaults(defineProps<{
-  label?: string
-  type?: string
-  placeholder?: string
-  required?: boolean
-  autocomplete?: string
-  name?: string
-}>(), {
-  label: '',
-  type: 'text',
-  placeholder: '',
-  required: false,
-  autocomplete: '',
-  name: '',
+defineOptions({
+  inheritAttrs: false
 })
 
-// Generate a label `for` attribute based on label text
-const transformedLabel = computed(() => {
-  const base = props.label?.trim().toLowerCase().replace(/\s+/g, '-') || 'input'
-  return `${base}-input`
+const modelValue = defineModel()
+
+const props = defineProps({
+  type: { type: String, default: 'text' },
+  required: { type: Boolean, default: true },
+  name: String,
+  disabled: Boolean,
+  readonly: Boolean,
+  frontendError: {
+    type: [String, Array],
+    default: null
+  },
+  backendError: {
+    type: Array,
+    default: null
+  }
 })
+
+const frontendErrors = computed(() =>
+  Array.isArray(props.frontendError) ? props.frontendError : props.frontendError ? [props.frontendError] : []
+)
+
+const hasFrontendError = computed(() => frontendErrors.value.length > 0)
+
+const hasBackendError = computed(() => props?.backendError?.length > 0)
 </script>

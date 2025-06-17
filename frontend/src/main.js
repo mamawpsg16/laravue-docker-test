@@ -3,9 +3,15 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router'; // Import the router we defined in router/index.js
 import { createPinia } from 'pinia'; // If you're using Pinia
-import 'bootstrap'; // Optional: import JS for modals, dropdowns, etc.
+// import 'bootstrap'; // Optional: import JS for modals, dropdowns, etc.
 import axios from '@/services/axios.js'; // Import axios for HTTP requests
-import '@/assets/scss/main.scss'
+import '@/assets/scss/main.scss';
+import '@/assets/main.css';
+
+import Toast from "vue-toastification"
+
+import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
+ModuleRegistry.registerModules([ AllCommunityModule ]);
 
 const app = createApp(App);
 
@@ -18,7 +24,7 @@ app.use(router);
 // Example: Set a global function
 app.config.globalProperties.$axios = axios; // Make axios available globally (optional, but convenient)
 app.config.globalProperties.$hello = () => 'Hello from global!';
-
+app.use(Toast)
 app.provide('message', 'hello')
 
 app.config.errorHandler = (err, instance, info) => {

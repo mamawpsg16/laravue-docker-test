@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Models\Provider;
+use App\Models\Appointment;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\URL;
 use App\Notifications\CustomVerifyEmail;
@@ -22,9 +24,10 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'first_name', 'middle_name', 'last_name', 'email', 'password',
+        'phone', 'date_of_birth', 'gender', 'address',
+        'emergency_contact_name', 'emergency_contact_phone',
+        'role', 'avatar', 'is_active'
     ];
 
     /**
@@ -37,6 +40,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
+    protected $appends = ['full_name'];
+
     /**
      * The attributes that should be cast.
      *
@@ -44,25 +49,63 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'last_login_at' => 'datetime',
+        'date_of_birth' => 'date',
+        'is_active' => 'boolean',
     ];
 
-    // A simple method to create a user
-    public static function createUser($name, $email, $password)
+    // Role checking methods
+    public function isPatient()
     {
-        return self::create([
-            'name' => $name,
-            'email' => $email,
-            'password' => bcrypt($password),
-        ]);
+        return $this->role === 'patient';
     }
 
-    public function address()
+    public function isDoctor()
     {
-        return $this->hasOne(UserAddress::class);
+        return $this->role === 'doctor';
     }
 
-    // public function sendEmailVerificationNotification()
-    // {
-    //     $this->notify(new CustomVerifyEmail);
-    // }
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isReceptionist()
+    {
+        return $this->role === 'receptionist';
+    }
+
+    // Relationships
+     // Relationships
+    public function doctorProfile()
+    {
+        return $this->hasOne(DoctorProfile::class);
+    }
+
+    public function patientAppointments()
+    {
+        return $this->hasMany(Appointment::class, 'patient_id');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    // Scopes
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeByRole($query, $role)
+    {
+        return $query->where('role', $role);
+    }
+
+    // Accessors
+    public function getFullNameAttribute()
+    {
+        return trim($this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name);
+    }
 }

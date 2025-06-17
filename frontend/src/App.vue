@@ -1,19 +1,23 @@
 <template>
-  <div id="app" class="d-flex">
-    <!-- Sidebar shown only if authenticated -->
+  <div id="app" class="h-screen bg-gray-50 overflow-hidden">
     <AppSidebar v-if="isAuthenticated" v-model:visible="sidebarVisible" />
 
-    <!-- Main content -->
     <div 
-      class="flex-grow-1 main-content" 
-      :class="{ 'sidebar-open': isAuthenticated && sidebarVisible }"
+      class="transition-all duration-300 ease-in-out h-full"
+      :class="mainContentClasses"
     >
-      <AppNavbar 
-        :sidebar-visible="sidebarVisible"
-        @update:sidebar-visible="sidebarVisible = $event"
-      />
-      <main class="p-3">
-        <router-view />
+      <!-- ✅ Mobile Toggle Header -->
+      <div v-if="isAuthenticated && isMobile" class="p-4 bg-white shadow-md flex items-center lg:hidden">
+        <button @click="sidebarVisible = true" class="text-gray-700 focus:outline-none">
+          <i class="bi bi-list text-2xl"></i>
+        </button>
+        <span class="ml-4 text-lg font-semibold">Menu</span>
+      </div>
+
+      <main class="h-full overflow-y-auto bg-white">
+        <div class="p-4 w-full">
+          <router-view />
+        </div>
       </main>
     </div>
   </div>
@@ -21,90 +25,72 @@
 
 <script setup>
 import AppSidebar from '@/components/AppSidebar.vue'
-import AppNavbar from '@/components/AppNavbar.vue'
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
+const isAuthenticated = computed(() => authStore.isAuthenticated)
 
-const isAuthenticated = computed(() => authStore.isAuthenticated && authStore.user?.email_verified_at)
+const sidebarVisible = ref(false)
+const isMobile = ref(false)
+const isMounted = ref(false)
 
-const sidebarVisible = ref(window.innerWidth >= 992)
-const isManualToggle = ref(false)
+const updateIsMobile = () => {
+  const nowMobile = window.innerWidth < 992
 
-const toggleSidebar = () => {
-  sidebarVisible.value = !sidebarVisible.value
-  isManualToggle.value = true
-  setTimeout(() => {
-    isManualToggle.value = false
-  }, 300)
+  // If switching from mobile to desktop, show the sidebar
+  if (!nowMobile && isMobile.value) {
+    sidebarVisible.value = true
+  }
+
+  isMobile.value = nowMobile
+
+  // Initial sidebar visibility
+  if (!isMounted.value) {
+    sidebarVisible.value = !nowMobile
+  }
 }
 
-const handleResize = () => {
-  if (isManualToggle.value) return
-  sidebarVisible.value = window.innerWidth >= 992
-}
+const mainContentClasses = computed(() => {
+  if (!isAuthenticated.value) return 'w-full'
+  return [
+    'flex-1',
+    {
+      'ml-64': sidebarVisible.value && !isMobile.value,
+      'ml-0': !sidebarVisible.value || isMobile.value
+    }
+  ]
+})
 
 onMounted(() => {
   authStore.fetchUser()
-  window.addEventListener('resize', handleResize)
+  updateIsMobile()
+  isMounted.value = true
+  window.addEventListener('resize', updateIsMobile)
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize)
+  window.removeEventListener('resize', updateIsMobile)
 })
 </script>
 
 <style scoped>
-body {
-  font-family: 'Ancizar Serif', serif !important;
+main::-webkit-scrollbar {
+  width: 6px;
 }
-
-#app {
-  height: 100vh;
-  overflow: hidden;
+main::-webkit-scrollbar-track {
+  background: #f1f5f9;
 }
-
-/* Sidebar width fixed */
-.app-sidebar {
-  width: 250px;
-  transition: all 0.3s ease;
-  /* Rounded edges for sidebar */
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+main::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
 }
-
-/* Main content styles */
-.main-content {
-  flex-grow: 1;
-  transition: margin-left 0.3s ease;
-  margin-left: 0; /* default */
+main::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
-
-
-/* When sidebar is open on desktop, push main content */
-.sidebar-open {
-  margin-left: 250px;
-}
-/* Push main content when sidebar is open on desktop */
-@media (min-width: 992px) {
-  .sidebar-open {
-    margin-left: 280px; /* match sidebar width */
-  }
-}
-
-/* On smaller screens, sidebar overlays content, so no margin */
-@media (max-width: 991.98px) {
-  .main-content,
-  .sidebar-open {
+@media (max-width: 991px) {
+  .main-content {
     margin-left: 0 !important;
-    width: 100%;
   }
-}
-/* Optional: adjust the router-view area height */
-main.p-3 {
-  min-height: calc(100vh - 56px); /* Adjust if navbar height changes */
-  overflow-y: auto;
 }
 </style>

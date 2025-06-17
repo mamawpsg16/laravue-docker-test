@@ -1,81 +1,124 @@
 <template>
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-4">
-        <div class="card shadow">
-          <div class="card-body">
-            <h3 class="card-title mb-4 text-center">Login</h3>
-            <form @submit.prevent="login">
-              <div class="mb-3">
-                <BaseInput
-                  v-model="email"
-                  label="Email"
-                  type="email"
-                  name="email"
-                  placeholder="Enter your email"
-                  required
-                  autocomplete="email"
-                />
-              </div>
-              <div class="mb-3">
-                <BaseInput
-                  v-model="password"
-                  label="Password"
-                  type="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  required
-                  autocomplete="current-password"
-                />
-              </div>
-              <div class="d-grid gap-2" :disabled="loading">
-                <span v-if="loading">
-                  <LoadingSpinner/>
-                </span>
-                <button v-else type="submit" class="btn btn-primary">Login</button>
-              </div>
-            </form>
-            <p v-if="errorMessage" class="text-danger mt-3">{{ errorMessage }}</p>
-            <p class="mt-3 text-center">
-              Don't have an account?
-              <router-link :to="{ name: 'register' }" class="btn btn-link p-0">Register</router-link>
-            </p>
-          </div>
-        </div>
+  <AuthLayout :class="{ 'border border-red-500': catchErrorMessage}">
+    <h3 class="text-3xl font-bold mb-6 text-center text-gray-900">Login</h3>
+    <form @submit.prevent="login" class="space-y-3">
+      <Label label="Email Address" for="email"/>
+      <BaseInput
+        id="email"
+        v-model="form.email"
+        autocomplete="email"
+        placeholder="Enter your email"
+        :frontend-error="getFrontendError('email')"
+        :backend-error="getBackendError('email',  backendErrors)"
+      />
+
+      <Label label="Password" for="password"/>
+      <BaseInput
+        id="password"
+        v-model="form.password"
+        autocomplete="current-password"
+        placeholder="Enter your password"
+        minlength="8"
+        maxlength="20"
+        type="password"
+        :frontend-error="getFrontendError('password')"
+        :backend-error="getBackendError('password',  backendErrors)"
+      />
+      <div v-if="catchErrorMessage"  class="mt-1 text-sm text-red-600 space-y-0.5">
+        {{ catchErrorMessage }}
       </div>
-    </div>
-  </div>
+
+      <div>
+        <button
+          type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
+        >
+        Login
+        </button>
+      </div>
+
+      <p class="mt-3 text-center text-sm text-gray-600">
+        Don't have an account?
+        <router-link :to="{ name: 'register' }" class="text-indigo-600 hover:underline">Register</router-link>
+      </p>
+    </form>
+
+    <!-- Show Register modal -->
+    <Register v-if="showRegister" :show="showRegister" @close="showRegister = false" />
+  </AuthLayout>
 </template>
 
-<script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-import BaseInput from '@/components/Form/BaseInput.vue';
-import { useRouter } from 'vue-router';
-import LoadingSpinner from '@/components/AsyncComponents/LoadingSpinner.vue'
+<script setup>
+import AuthLayout from '@/components/AuthLayout.vue'
+import Register from './Register.vue'
+import { ref, reactive } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import BaseInput from '@/components/Form/BaseInput.vue'
+import { useRouter } from 'vue-router'
+import { useNotify } from '@/composables/useNotify'
+import { useFormValidation } from '@/composables/useFormValidation'
+import { required, email, helpers, minLength, maxLength } from '@vuelidate/validators'
+import Label from '@/components/Form/Label.vue';
 
-const loading = ref(false);
-const email = ref('');
-const password = ref('');
-const errorMessage = ref<string | null>(null);
+const loading = ref(false)
 
-const authStore = useAuthStore();
-const router = useRouter();
+const form = reactive({
+  email: null,
+  password: null,
+})
 
+const catchErrorMessage = ref(null);
+
+const backendErrors = ref(null)
+
+const showRegister = ref(false)
+
+const authStore = useAuthStore()
+const router = useRouter()
+
+const { notifyToast } = useNotify()
+
+const rules = {
+  email: { required, email },
+  password: { 
+    required,
+    minLength:  helpers.withMessage(
+      'Password must be at least 8 characters',
+      minLength(8)
+    ),
+    maxLength:  helpers.withMessage(
+      'Password must be at most 20 characters',
+      maxLength(20)
+    ),
+  },
+}
+
+
+const { $v, getFrontendError, getBackendError } = useFormValidation(form, rules)
 
 async function login() {
-  loading.value = true;
+  loading.value = true
+  if (!(await $v.value.$validate())) {
+    loading.value = false
+    return
+  }
   try {
-    await authStore.login({ email: email.value, password: password.value });
-    router.push({ name: 'dashboard' });
-  }catch (error: unknown) {
-    if (error instanceof Error) {
-      errorMessage.value = error.message;
-    } else {
-      errorMessage.value = String(error) || 'Login failed';
-    }
+    await authStore.login({ ...form })
+    router.push({ name: 'dashboard' })
+  } catch (error) {
+     const { errors, message } = error?.response?.data;
+
+     backendErrors.value = errors;
+     catchErrorMessage.value = message;
+
+     notifyToast('Enter valid email and password', 'error', {
+        position: 'bottom-right',
+        timeout: 3000,
+        closeOnClick: false,
+        pauseOnHover:false
+      })
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 </script>
