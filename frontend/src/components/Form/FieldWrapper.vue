@@ -1,18 +1,18 @@
 <!-- FieldWrapper.vue -->
 <template>
-  <div class="mb-2">
-    <Label :label="props.label"/>
+  <div class="mb-1"> <!-- reduced from mb-2 -->
+    <Label :label="props.label" v-if="props" :required="required"/>
     <div :class="['w-full', (hasFrontendError || hasBackendError)  ? 'border border-red-500 rounded' : '']">
         <slot />
     </div>
 
-    <div v-if="hasFrontendError" class="mt-1 text-sm text-red-600 space-y-0.5">
+    <div v-if="hasFrontendError" class="mt-0.5 text-xs text-red-600 space-y-0"> <!-- reduced from mt-1, text-sm, space-y-0.5 -->
       <div v-for="(err, index) in frontendErrors" :key="index">
         {{ err }}
       </div>
     </div>
 
-    <div v-if="hasBackendError" class="mt-1 text-sm text-red-600 space-y-0.5">
+    <div v-if="hasBackendError" class="mt-0.5 text-xs text-red-600 space-y-0"> <!-- reduced from mt-1, text-sm, space-y-0.5 -->
       <div v-for="(err, index) in backendError" :key="index">
         {{ err }}
       </div>
@@ -30,6 +30,10 @@ const props = defineProps({
   backendError:{
     type: Array,
     default: null
+  },
+  required:{
+    type:Boolean,
+    default:false
   }
 })
 

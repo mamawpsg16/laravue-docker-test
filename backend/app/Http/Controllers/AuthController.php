@@ -20,7 +20,7 @@ class AuthController extends Controller
         
         $user = User::create($data);
 
-            event(new Registered($user));
+            // event(new Registered($user));
             
             // Automatically log in the user after registration
             Auth::login($user);
@@ -69,7 +69,8 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         // Invalidate the user's session (Sanctum session-based)
-        Auth::logout();
+        // Auth::logout();
+        Auth::guard('web')->logout();
 
         // Also invalidate the Sanctum session cookie
         $request->session()->invalidate();

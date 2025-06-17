@@ -15,16 +15,21 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('appointment_id')->nullable()->constrained()->onDelete('cascade');
-            $table->string('type', 50); // appointment_reminder, appointment_confirmed, etc.
+            $table->string('type', 50);
             $table->string('title', 200);
             $table->text('message');
-            $table->enum('sent_via', ['email', 'sms', 'push'])->nullable();
+            $table->json('data')->nullable(); // Additional notification data
+            $table->enum('channel', ['email', 'sms', 'push', 'system'])->default('system');
+            $table->timestamp('scheduled_at')->nullable(); // For scheduled notifications
             $table->timestamp('sent_at')->nullable();
             $table->boolean('is_read')->default(false);
+            $table->integer('retry_count')->default(0);
+            $table->text('error_message')->nullable();
             $table->timestamps();
             
-            $table->index(['user_id', 'is_read']);
-            $table->index(['type', 'sent_at']);
+            $table->index(['user_id', 'is_read', 'created_at']);
+            $table->index(['type', 'scheduled_at']);
+            $table->index(['sent_at', 'channel']);
         });
     }
 

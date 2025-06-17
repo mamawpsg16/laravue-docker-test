@@ -9,6 +9,10 @@ import '@/assets/scss/main.scss';
 import '@/assets/main.css';
 
 import Toast from "vue-toastification"
+
+import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
+ModuleRegistry.registerModules([ AllCommunityModule ]);
+
 const app = createApp(App);
 
 // Use Pinia (if you're using it for state management)

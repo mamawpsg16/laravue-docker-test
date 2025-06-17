@@ -1,48 +1,53 @@
 <template>
     <!-- <BaseModal :show="show" @close="$emit('close')"> -->
     <AuthLayout :class="{ 'border border-red-500': catchErrorMessage}">
-      <h3 class="text-2xl font-bold text-center text-gray-900 mt-5">Registration</h3> <!-- smaller heading -->
-      <form @submit.prevent="register"  class="space-y-2.5 p-6">
-  
+      <h3 class="text-xl font-bold text-center text-gray-900 mt-3">Registration</h3> <!-- reduced from text-2xl and mt-5 -->
+      <form @submit.prevent="register" class="space-y-1.5 p-4"> <!-- reduced from space-y-2.5 and p-6 -->
+
+        <Label label="First Name" for="first_name"/>
         <BaseInput
+          id="first_name"
           v-model="form.first_name"
-          label="First Name"
           autocomplete="given-name"
           placeholder="Enter your first name"
           :frontend-error="getFrontendError('first_name')"
           :backend-error="getBackendError('first_name',  backendErrors)"
         />
-  
+        
+        <Label label="Middle Name" for="middle_name" :required="false"/>
         <BaseInput
+          id="middle_name"
           v-model="form.middle_name"
-          label="Middle Name"
           autocomplete="additional-name"
           placeholder="Enter your middle name"
           :required="false"
           :backend-error="getBackendError('middle_name',  backendErrors)"
         />
-  
+        
+        <Label label="Last Name" for="last_name"/>
         <BaseInput
+          id="last_name"
           v-model="form.last_name"
-          label="Last Name"
           autocomplete="family-name"
           placeholder="Enter your last name"
           :frontend-error="getFrontendError('last_name')"
           :backend-error="getBackendError('last_name',  backendErrors)"
         />
   
+        <Label label="Email Address" for="email"/>
         <BaseInput
+          id="email"
           v-model="form.email"
-          label="Email"
           autocomplete="email"
           placeholder="Enter your email"
           :frontend-error="getFrontendError('email')"
           :backend-error="getBackendError('email',  backendErrors)"
         />
   
+        <Label label="Password" for="password"/>
         <BaseInput
+          id="password"
           v-model="form.password"
-          label="Password"
           autocomplete="new-password"
           placeholder="Enter your password"
           minlength="8"
@@ -52,9 +57,10 @@
           :backend-error="getBackendError('password',  backendErrors)"
         />
   
+        <Label label="Password Confirmation" for="password_confirmation"/>
         <BaseInput
+          id="password_confirmation"
           v-model="form.password_confirmation"
-          label="Confirm Password"
           minlength="8"
           maxlength="20"
           autocomplete="new-password"
@@ -83,34 +89,33 @@
           />
         </FieldWrapper>
   
-        <BaseInput 
+       <Label label="Address" for="address" :required="false"/>
+        <BaseInput
+          id="address"
           :required="false"
           v-model="form.address"
-          label="Address"
           placeholder="Enter your address"
-          autocomplete="street-name"
           :backend-error="getBackendError('address',  backendErrors)"
         />
   
         <button type="submit" :disabled="loading"
-          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"> <!-- reduced py-3 to py-2 -->
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-1.5 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-3"> <!-- reduced py-2 to py-1.5, added mt-3 -->
           <span v-if="loading" class="flex items-center justify-center">
             <span class="ml-2">Creating account...</span>
           </span>
           <span v-else>Create account</span>
         </button>
   
-        <div v-if="errorMessage" class="rounded-md bg-red-50 p-4 text-sm text-red-800 text-center">
+        <div v-if="errorMessage" class="rounded-md bg-red-50 p-2 text-sm text-red-800 text-center"> <!-- reduced p-4 to p-2 -->
           {{ errorMessage }}
         </div>
   
-        <p class="text-sm text-center text-gray-600">
+        <p class="text-xs text-center text-gray-600 pt-2"> <!-- reduced from text-sm and added pt-2 -->
           Already have an account?
           <router-link :to="{ name: 'login' }" class="text-indigo-600 hover:underline">Sign in</router-link>
         </p>
       </form>
     </AuthLayout>
-    <!-- </BaseModal> -->
 </template>
 
 
@@ -134,9 +139,8 @@ import { useFormValidation } from '@/composables/useFormValidation'
 import { required, email, sameAs, helpers, minLength, maxLength } from '@vuelidate/validators'
 import FieldWrapper from '@/components/Form/FieldWrapper.vue'
 import { useNotify } from '@/composables/useNotify'
-import BaseModal from '@/components/BaseModal.vue';
 import AuthLayout from '@/components/AuthLayout.vue'
-
+import Label from '@/components/Form/Label.vue';
 
 const form = reactive({
   first_name: null,
@@ -210,6 +214,7 @@ const { $v, getFrontendError, getBackendError } = useFormValidation(form, rules)
 async function register() {
   loading.value = true
   errorMessage.value = null
+  catchErrorMessage.value = null;
 
   if (!(await $v.value.$validate())) {
     loading.value = false

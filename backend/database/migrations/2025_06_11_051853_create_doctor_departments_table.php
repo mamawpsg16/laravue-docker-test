@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('doctor_id')->constrained('doctor_profiles')->onDelete('cascade');
             $table->foreignId('department_id')->constrained()->onDelete('cascade');
+            $table->boolean('is_primary')->default(false); // Primary department
             $table->timestamps();
             
             $table->unique(['doctor_id', 'department_id']);
+            $table->index(['department_id', 'is_primary']);
         });
     }
 

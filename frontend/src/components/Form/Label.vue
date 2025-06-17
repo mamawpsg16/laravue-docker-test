@@ -1,7 +1,7 @@
 <template>
     <label
-      :for="transformedLabel"
-      class="block text-sm font-medium text-gray-700 mb-1"
+      :for="props.for"
+      class="text-sm font-medium text-gray-700 mb-1"
     >
       {{ label }}
       <span v-if="required" class="text-red-500">*</span>
@@ -9,19 +9,18 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 const props = defineProps({
   label: String,
   required: {
     type: Boolean,
     default: true
-  }
+  },
+  for:{
+    type:String,
+    default:''
+  },
 })
 
-
-const transformedLabel = computed(() => {
-  return props.label?.trim().toLowerCase().replace(/\s+/g, '_') || 'input'
-})
 </script>
 
 <style lang="scss" scoped>

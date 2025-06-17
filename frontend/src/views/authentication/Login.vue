@@ -2,19 +2,21 @@
   <AuthLayout :class="{ 'border border-red-500': catchErrorMessage}">
     <h3 class="text-3xl font-bold mb-6 text-center text-gray-900">Login</h3>
     <form @submit.prevent="login" class="space-y-3">
-       <BaseInput
+      <Label label="Email Address" for="email"/>
+      <BaseInput
+        id="email"
         v-model="form.email"
-        label="Email"
         autocomplete="email"
         placeholder="Enter your email"
         :frontend-error="getFrontendError('email')"
         :backend-error="getBackendError('email',  backendErrors)"
       />
 
+      <Label label="Password" for="password"/>
       <BaseInput
+        id="password"
         v-model="form.password"
-        label="Password"
-        autocomplete="new-password"
+        autocomplete="current-password"
         placeholder="Enter your password"
         minlength="8"
         maxlength="20"
@@ -56,6 +58,7 @@ import { useRouter } from 'vue-router'
 import { useNotify } from '@/composables/useNotify'
 import { useFormValidation } from '@/composables/useFormValidation'
 import { required, email, helpers, minLength, maxLength } from '@vuelidate/validators'
+import Label from '@/components/Form/Label.vue';
 
 const loading = ref(false)
 

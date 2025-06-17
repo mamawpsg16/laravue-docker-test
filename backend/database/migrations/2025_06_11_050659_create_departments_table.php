@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('departments', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100);
+            $table->string('name', 100)->unique();
+            $table->string('code', 10)->unique(); // Department code for easy reference
             $table->text('description')->nullable();
+            $table->string('head_doctor_id')->nullable(); // Foreign key added later
             $table->boolean('is_active')->default(true);
-            $table->string('created_by', 100);
-            $table->string('updated_by', 100)->nullable();
+            $table->json('operating_hours')->nullable(); // Store flexible hours
             $table->timestamps();
             
-            $table->index('is_active');
-            $table->index('name');
+            $table->index(['is_active', 'name']);
 
         });
     }

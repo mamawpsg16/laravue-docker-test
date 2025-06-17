@@ -15,16 +15,18 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('license_number', 50)->unique();
-            $table->string('specialization', 100)->nullable();
+            $table->json('specializations'); // Multiple specializations
             $table->integer('experience_years')->default(0);
-            $table->text('qualification')->nullable();
-            $table->decimal('consultation_fee', 10, 2)->nullable();
+            $table->json('qualifications')->nullable(); // Store multiple qualifications
+            $table->decimal('consultation_fee', 10, 2)->default(0);
+            $table->text('about')->nullable(); // Doctor's bio
+            $table->json('languages_spoken')->nullable();
             $table->boolean('is_available')->default(true);
+            $table->boolean('accepts_emergency')->default(false);
             $table->timestamps();
             
-           $table->unique('user_id'); // One-to-one relationship
-           $table->index('is_available'); // For availability filtering
-           $table->index('specialization'); // Optional: for filtering/search
+            $table->unique('user_id');
+            $table->index(['is_available', 'accepts_emergency']);
         });
     }
 

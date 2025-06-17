@@ -15,16 +15,17 @@ return new class extends Migration
             $table->id();
             $table->foreignId('department_id')->constrained()->onDelete('cascade');
             $table->string('name', 100);
+            $table->string('code', 20)->unique(); // Service code
             $table->text('description')->nullable();
-            $table->integer('duration'); // in minutes
-            $table->decimal('price', 10, 2)->nullable();
+            $table->integer('duration_minutes'); // More explicit naming
+            $table->decimal('base_price', 10, 2)->default(0);
+            $table->text('preparation_instructions')->nullable();
+            $table->boolean('requires_fasting')->default(false);
             $table->boolean('is_active')->default(true);
-            $table->string('created_by', 100);
-            $table->string('updated_by', 100)->nullable();
             $table->timestamps();
             
-            $table->index('name');
             $table->index(['department_id', 'is_active']);
+            $table->index('code');
         });
     }
 

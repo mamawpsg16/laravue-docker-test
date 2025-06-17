@@ -1,43 +1,33 @@
 <template>
-  <div class="mb-2">
-    <label
-      v-if="label"
-      :for="transformedLabel"
-      class="block text-sm font-medium text-gray-700 mb-1"
-    >
-      {{ label }}
-      <span v-if="required" class="text-red-500">*</span>
-    </label>
     <input
       v-bind="$attrs" 
-      :id="transformedLabel"
       :type="type"
       v-model="modelValue"
-      class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md py-2 px-3"
-      :placeholder="placeholder"
-      :autocomplete="autocomplete"
-      :name="inputName"
-      :aria-label="label || placeholder"
       :disabled="disabled"
       :readonly="readonly"
-      :class="{
-        'border-gray-300': (!hasFrontendError || !hasBackendError),
-        'border-red-500': (hasFrontendError || hasBackendError)
-      }"
+     :class="[
+        type === 'checkbox'
+          ? 'h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
+          : 'w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none mb-3',
+        {
+          'border-gray-300  focus:ring-2 focus:ring-blue-500': !hasFrontendError && !hasBackendError,
+          'border-red-500': hasFrontendError || hasBackendError
+        },
+        $attrs.class // ← allow user-defined class to override
+      ]"
     />
     <!-- Multiple or single frontendError display -->
-    <div v-if="hasFrontendError" class="mt-1 text-sm text-red-600 space-y-0.5">
+    <div v-if="hasFrontendError" class="mt-0.5 text-xs text-red-600 space-y-0"> 
       <div v-for="(err, index) in frontendErrors" :key="index">
         {{ err }}
       </div>
     </div>
 
-    <div v-if="hasBackendError" class="mt-1 text-sm text-red-600 space-y-0.5">
+    <div v-if="hasBackendError" class="mt-0.5 text-xs text-red-600 space-y-0"> <!-- reduced from mt-1, text-sm, space-y-0.5 -->
       <div v-for="(err, index) in backendError" :key="index">
         {{ err }}
       </div>
     </div>
-  </div>
 </template>
 
 <script setup>
@@ -50,30 +40,20 @@ defineOptions({
 const modelValue = defineModel()
 
 const props = defineProps({
-  label: String,
   type: { type: String, default: 'text' },
-  placeholder: String,
-  required: { type:Boolean, default: true},
-  autocomplete: String,
+  required: { type: Boolean, default: true },
   name: String,
-  frontendError: String,
   disabled: Boolean,
   readonly: Boolean,
   frontendError: {
     type: [String, Array],
     default: null
   },
-  backendError:{
+  backendError: {
     type: Array,
     default: null
   }
 })
-
-const transformedLabel = computed(() => {
-  return props.label?.trim().toLowerCase().replace(/\s+/g, '_') || 'input'
-})
-
-const inputName = computed(() => props.name || transformedLabel.value)
 
 const frontendErrors = computed(() =>
   Array.isArray(props.frontendError) ? props.frontendError : props.frontendError ? [props.frontendError] : []

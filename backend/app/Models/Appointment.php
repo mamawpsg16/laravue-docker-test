@@ -14,28 +14,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Appointment extends Model
 {
     use HasFactory;
-    
-
-     // Define valid statuses
-     const STATUS_PENDING = 'pending';
-     const STATUS_CONFIRMED = 'confirmed';
-     const STATUS_COMPLETED = 'completed';
-     const STATUS_CANCELLED = 'cancelled';
-     const STATUS_NO_SHOW = 'no_show';
- 
-     const VALID_STATUSES = [
-         self::STATUS_PENDING,
-         self::STATUS_CONFIRMED,
-         self::STATUS_COMPLETED,
-         self::STATUS_CANCELLED,
-         self::STATUS_NO_SHOW,
-     ];
 
     protected $fillable = [
-        'client_id', 'provider_id', 'hospital_id', 'service_id',
-        'appointment_date', 'start_time', 'end_time', 'status',
-        'notes', 'client_notes', 'provider_notes', 'total_amount',
-        'booking_reference'
+        'appointment_number', 'patient_id', 'doctor_id', 'service_id',
+        'department_id', 'appointment_date', 'start_time', 'end_time',
+        'status', 'priority', 'patient_notes', 'doctor_notes', 'symptoms',
+        'total_amount', 'payment_status', 'confirmed_at', 'completed_at',
+        'created_by', 'cancelled_by', 'cancellation_reason'
     ];
 
     protected $casts = [
@@ -43,48 +28,19 @@ class Appointment extends Model
         'start_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',
         'total_amount' => 'decimal:2',
+        'confirmed_at' => 'datetime',
+        'completed_at' => 'datetime',
     ];
 
-    // Boot method to generate booking reference
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($appointment) {
-            $appointment->booking_reference = 'APT-' . strtoupper(Str::random(8));
-        });
-    }
-
-    // Validation rules
-    public static function validationRules()
-    {
-        return [
-            'client_id' => 'required|exists:users,id',
-            'provider_id' => 'required|exists:providers,id',
-            'hospital_id' => 'required|exists:hospitals,id',
-            'service_id' => 'required|exists:services,id',
-            'appointment_date' => 'required|date|after:today',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
-            'status' => 'required|in:' . implode(',', self::VALID_STATUSES),
-            'total_amount' => 'required|numeric|min:0',
-        ];
-    }
-
     // Relationships
-    public function client()
+    public function patient()
     {
-        return $this->belongsTo(User::class, 'client_id');
+        return $this->belongsTo(User::class, 'patient_id');
     }
 
-    public function provider()
+    public function doctor()
     {
-        return $this->belongsTo(Provider::class);
-    }
-
-    public function hospital()
-    {
-        return $this->belongsTo(Hospital::class);
+        return $this->belongsTo(DoctorProfile::class, 'doctor_id');
     }
 
     public function service()
@@ -92,16 +48,36 @@ class Appointment extends Model
         return $this->belongsTo(Service::class);
     }
 
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function cancelledBy()
+    {
+        return $this->belongsTo(User::class, 'cancelled_by');
+    }
+
+    public function histories()
+    {
+        return $this->hasMany(AppointmentHistory::class);
+    }
+
     public function notifications()
     {
-        return $this->hasMany(AppointmentNotification::class);
+        return $this->hasMany(Notification::class);
     }
 
     // Scopes
     public function scopeUpcoming($query)
     {
         return $query->where('appointment_date', '>=', now()->toDateString())
-                    ->whereIn('status', ['confirmed', 'pending']);
+                    ->whereIn('status', ['scheduled', 'confirmed']);
     }
 
     public function scopeToday($query)
@@ -114,28 +90,27 @@ class Appointment extends Model
         return $query->where('status', $status);
     }
 
-    public function scopeByProvider($query, $providerId)
+    // Boot method for auto-generating appointment number
+    protected static function boot()
     {
-        return $query->where('provider_id', $providerId);
+        parent::boot();
+        
+        static::creating(function ($appointment) {
+            $appointment->appointment_number = static::generateAppointmentNumber();
+        });
     }
 
-    // Helper methods
-    public function canBeCancelled()
+    private static function generateAppointmentNumber()
     {
-        return in_array($this->status, ['pending', 'confirmed']) && 
-               $this->appointment_date > now()->addHours(24);
+        $prefix = 'APT';
+        $date = now()->format('Ymd');
+        $lastAppointment = static::whereDate('created_at', now()->toDateString())
+                                ->latest('id')
+                                ->first();
+        
+        $sequence = $lastAppointment ? 
+            (int) substr($lastAppointment->appointment_number, -4) + 1 : 1;
+        
+        return $prefix . $date . str_pad($sequence, 4, '0', STR_PAD_LEFT);
     }
-
-    public function canBeRescheduled()
-    {
-        return in_array($this->status, ['pending', 'confirmed']) && 
-               $this->appointment_date > now()->addHours(24);
-    }
-
-      // Status checking methods
-    public function isPending() { return $this->status === self::STATUS_PENDING; }
-    public function isConfirmed() { return $this->status === self::STATUS_CONFIRMED; }
-    public function isCompleted() { return $this->status === self::STATUS_COMPLETED; }
-    public function isCancelled() { return $this->status === self::STATUS_CANCELLED; }
-    public function isNoShow() { return $this->status === self::STATUS_NO_SHOW; }
 }

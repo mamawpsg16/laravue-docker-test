@@ -13,23 +13,34 @@ return new class extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
+            $table->string('appointment_number', 20)->unique(); // Human-readable ID
             $table->foreignId('patient_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('doctor_id')->constrained('doctor_profiles')->onDelete('cascade');
             $table->foreignId('service_id')->constrained()->onDelete('cascade');
+            $table->foreignId('department_id')->constrained(); // Denormalized for reporting
             $table->date('appointment_date');
-            $table->time('appointment_time');
+            $table->time('start_time');
             $table->time('end_time');
-            $table->enum('status', ['scheduled', 'confirmed', 'completed', 'cancelled', 'no_show'])->default('scheduled');
-            $table->text('notes')->nullable();
+            $table->enum('status', ['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show', 'rescheduled'])->default('scheduled');
+            $table->enum('priority', ['normal', 'urgent', 'emergency'])->default('normal');
+            $table->text('patient_notes')->nullable(); // Patient's notes
+            $table->text('doctor_notes')->nullable(); // Doctor's notes
             $table->text('symptoms')->nullable();
-            $table->string('booking_reference', 20)->unique();
-            $table->string('created_by', 100)->constrained('users');
+            $table->decimal('total_amount', 10, 2)->default(0);
+            $table->enum('payment_status', ['pending', 'paid', 'partially_paid', 'refunded'])->default('pending');
+            $table->timestamp('confirmed_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('cancelled_by')->nullable()->constrained('users');
+            $table->text('cancellation_reason')->nullable();
             $table->timestamps();
             
-            $table->index(['patient_id', 'appointment_date']);
-            $table->index(['doctor_id', 'appointment_date']);
-            $table->index(['appointment_date', 'status']);
-            $table->unique(['doctor_id', 'appointment_date', 'appointment_time']);
+            // Composite indexes for common queries
+            $table->index(['patient_id', 'appointment_date', 'status']);
+            $table->index(['doctor_id', 'appointment_date', 'status']);
+            $table->index(['appointment_date', 'status', 'priority']);
+            $table->index(['department_id', 'appointment_date']);
+            $table->unique(['doctor_id', 'appointment_date', 'start_time'], 'unique_doctor_slot');
         });
     }
 
