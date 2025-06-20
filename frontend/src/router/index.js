@@ -36,7 +36,7 @@ const routes = [
   },
   {
     path: '/',
-    redirect: '/login', // Redirect root path to login
+    component: () => import('@/views/home/Index.vue'),
   },
   {
     path: '/login',

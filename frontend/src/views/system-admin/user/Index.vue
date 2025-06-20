@@ -77,31 +77,31 @@
       </div>
     </div>
 
+    <VueGoodTableNext v-slot="{ props }" :data="formattedData" :columns="columns">
+      <template v-if="props.column.field === 'status'">
+        <FieldWrapper>
+          <span class="text-sm mr-3 text-gray-600">
+            {{ props.row.is_active ? 'Active' : 'Inactive' }}
+          </span>
+          <div
+            @click="toggleStatus(props.index)"
+            class="relative inline-flex h-6 w-11 items-center rounded-full cursor-pointer transition-colors"
+            :class="props.row.is_active ? 'bg-blue-600' : 'bg-gray-300'"
+          >
+            <span
+              class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ease-in-out"
+              :class="props.row.is_active ? 'translate-x-6' : 'translate-x-1'"
+            />
+          </div>
+        </FieldWrapper>
+        
+      </template>
+      <template v-else>
+        {{ props.row[props.column.field] }}
+      </template>
+    </VueGoodTableNext>
     <div class="border rounded-lg border-gray-200  mb-6">
       <!-- Users Table -->
-      <VueGoodTableNext v-slot="{ props }" :data="formattedData" :columns="columns">
-        <template v-if="props.column.field === 'status'">
-          <FieldWrapper>
-            <span class="text-sm mr-3 text-gray-600">
-              {{ props.row.is_active ? 'Active' : 'Inactive' }}
-            </span>
-            <div
-              @click="toggleStatus(props.index)"
-              class="relative inline-flex h-6 w-11 items-center rounded-full cursor-pointer transition-colors"
-              :class="props.row.is_active ? 'bg-blue-600' : 'bg-gray-300'"
-            >
-              <span
-                class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ease-in-out"
-                :class="props.row.is_active ? 'translate-x-6' : 'translate-x-1'"
-              />
-            </div>
-          </FieldWrapper>
-          
-        </template>
-        <template v-else>
-          {{ props.row[props.column.field] }}
-        </template>
-      </VueGoodTableNext>
       <!-- <div class="bg-white rounded-lg shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
@@ -465,8 +465,8 @@ const columns = ref([
   {  label: 'Birth Date', field: 'birth_date', width: '150px'},
   {  label: 'Gender', field: 'gender', width: '150px'},
   {  label: 'Address', field: 'address', width: '150px'},
-  {  label: 'Emergency Contact Name', field: 'emergency_contact_name', width: '150px'},
-  {  label: 'Emergency Contact #', field: 'emergency_contact_phone', width: '150px'},
+  {  label: 'Emergency Contact #', field: 'address', width: '150px'},
+  {  label: 'Emergency Contact #', field: 'address', width: '150px'},
   {  label: 'Role', field: 'role', width: '150px'},
   {  label: 'Status', field: 'status', width: '150px'},
 ]);
@@ -480,6 +480,126 @@ const roleOptions = ref([
 
 // Test users data matching database structure
 const users = ref([
+  {
+    id: 1,
+    first_name: 'John',
+    middle_name: 'Michael',
+    last_name: 'Doe',
+    email: 'john.doe@example.com',
+    email_verified_at: '2024-01-15T10:30:00Z',
+    phone: '+1234567890',
+    birth_date: '1985-03-15',
+    gender: 'male',
+    address: '123 Main St, Anytown, ST 12345',
+    emergency_contact_name: 'Jane Doe',
+    emergency_contact_phone: '+1234567891',
+    role: 'patient',
+    avatar: null,
+    is_active: true,
+    last_login_at: '2024-02-01T09:15:00Z',
+    created_at: '2024-01-10T08:00:00Z',
+    updated_at: '2024-02-01T09:15:00Z'
+  },
+  {
+    id: 2,
+    first_name: 'Sarah',
+    middle_name: null,
+    last_name: 'Johnson',
+    email: 'sarah.johnson@hospital.com',
+    email_verified_at: '2024-01-20T14:00:00Z',
+    phone: '+1234567892',
+    birth_date: '1978-07-22',
+    gender: 'female',
+    address: '456 Oak Ave, Medical District, ST 12346',
+    emergency_contact_name: 'Robert Johnson',
+    emergency_contact_phone: '+1234567893',
+    role: 'doctor',
+    avatar: null,
+    is_active: true,
+    last_login_at: '2024-02-05T07:30:00Z',
+    created_at: '2024-01-15T10:00:00Z',
+    updated_at: '2024-02-05T07:30:00Z'
+  },
+  {
+    id: 1,
+    first_name: 'John',
+    middle_name: 'Michael',
+    last_name: 'Doe',
+    email: 'john.doe@example.com',
+    email_verified_at: '2024-01-15T10:30:00Z',
+    phone: '+1234567890',
+    birth_date: '1985-03-15',
+    gender: 'male',
+    address: '123 Main St, Anytown, ST 12345',
+    emergency_contact_name: 'Jane Doe',
+    emergency_contact_phone: '+1234567891',
+    role: 'patient',
+    avatar: null,
+    is_active: true,
+    last_login_at: '2024-02-01T09:15:00Z',
+    created_at: '2024-01-10T08:00:00Z',
+    updated_at: '2024-02-01T09:15:00Z'
+  },
+  {
+    id: 2,
+    first_name: 'Sarah',
+    middle_name: null,
+    last_name: 'Johnson',
+    email: 'sarah.johnson@hospital.com',
+    email_verified_at: '2024-01-20T14:00:00Z',
+    phone: '+1234567892',
+    birth_date: '1978-07-22',
+    gender: 'female',
+    address: '456 Oak Ave, Medical District, ST 12346',
+    emergency_contact_name: 'Robert Johnson',
+    emergency_contact_phone: '+1234567893',
+    role: 'doctor',
+    avatar: null,
+    is_active: true,
+    last_login_at: '2024-02-05T07:30:00Z',
+    created_at: '2024-01-15T10:00:00Z',
+    updated_at: '2024-02-05T07:30:00Z'
+  },
+  {
+    id: 1,
+    first_name: 'John',
+    middle_name: 'Michael',
+    last_name: 'Doe',
+    email: 'john.doe@example.com',
+    email_verified_at: '2024-01-15T10:30:00Z',
+    phone: '+1234567890',
+    birth_date: '1985-03-15',
+    gender: 'male',
+    address: '123 Main St, Anytown, ST 12345',
+    emergency_contact_name: 'Jane Doe',
+    emergency_contact_phone: '+1234567891',
+    role: 'patient',
+    avatar: null,
+    is_active: true,
+    last_login_at: '2024-02-01T09:15:00Z',
+    created_at: '2024-01-10T08:00:00Z',
+    updated_at: '2024-02-01T09:15:00Z'
+  },
+  {
+    id: 2,
+    first_name: 'Sarah',
+    middle_name: null,
+    last_name: 'Johnson',
+    email: 'sarah.johnson@hospital.com',
+    email_verified_at: '2024-01-20T14:00:00Z',
+    phone: '+1234567892',
+    birth_date: '1978-07-22',
+    gender: 'female',
+    address: '456 Oak Ave, Medical District, ST 12346',
+    emergency_contact_name: 'Robert Johnson',
+    emergency_contact_phone: '+1234567893',
+    role: 'doctor',
+    avatar: null,
+    is_active: true,
+    last_login_at: '2024-02-05T07:30:00Z',
+    created_at: '2024-01-15T10:00:00Z',
+    updated_at: '2024-02-05T07:30:00Z'
+  },
   {
     id: 1,
     first_name: 'John',

@@ -74,7 +74,7 @@
           <!-- Logout -->
           <button
             @click="logout"
-            class="mt-auto m-3 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            class="mt-auto m-3 mb-5 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
           >
             Logout
           </button>

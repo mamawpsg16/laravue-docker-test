@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4">
+  <!-- <div class="p-4">
     <VueGoodTableNext v-slot="{ props }" :data="users" :columns="columns">
       <template v-if="props.column.field === 'status'">
         <FieldWrapper>
@@ -22,14 +22,22 @@
       <template v-else>
         {{ props.row[props.column.field] }}
       </template>
-    </VueGoodTableNext>
-  </div>
+    </VueGoodTableNext> -->
+    <GalleryCarousel :images="images" :maxWidth="'max-w-3xl'" />
+
+  <!-- </div> -->
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import FieldWrapper from '@/components/Form/FieldWrapper.vue'
 import VueGoodTableNext from '@/components/Table/VueGoodTableNext.vue'
+import GalleryCarousel from '@/components/GalleryCarousel.vue';
+
+const images = Array.from({ length: 10 }, (_, index) => ({
+  id: index + 1,
+  url: `https://picsum.photos/seed/${Math.random()}/800/600`,
+}))
 const users = ref([
   { id: 1, name: 'Alice', email: 'alice@example.com', status: true },
   { id: 2, name: 'Bob', email: 'bob@example.com', status: false },

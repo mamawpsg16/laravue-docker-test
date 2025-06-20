@@ -1,8 +1,9 @@
 services:
   app: # Changed from 'php' to 'app' for clarity; more descriptive
+    image: image-backend
     build:
       context: ./backend # Current directory
-    container_name: laravue-docker-app # Consistent naming
+    container_name: test-app # Consistent naming
     working_dir: /var/www/html # Application's root directory
     volumes:
       - ./backend:/var/www/html # Mounts your application code; useful for development
@@ -16,10 +17,11 @@ services:
     #    - "9000:9000" # PHP-FPM port;  No need to expose this to the host
   
   vue:
+    image: image-frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile.vue
-    container_name: laravue-docker-frontend
+    container_name: test-frontend
     ports:
       - "5175:5174"  # Host port 5175 maps to container port 5174
     volumes:
@@ -30,7 +32,7 @@ services:
 
   web: # Changed from 'nginx' to 'web'
     image: nginx:alpine # Lightweight Nginx image
-    container_name: laravue-docker-nginx-webserver # Consistent naming
+    container_name: test-nginx # Consistent naming
     ports:
       - "8002:80" # Host:Container port mapping.  Use 8000 for local
     volumes:
@@ -45,7 +47,7 @@ services:
   
   postgres-db:
     image: postgres:15
-    container_name: laravue-docker-postgres-db
+    container_name: test-postgres-db
     environment:
       POSTGRES_USER: postgres_user
       POSTGRES_PASSWORD: postgres_password

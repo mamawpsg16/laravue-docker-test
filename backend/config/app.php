@@ -127,6 +127,8 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'report_type' => 'daily',
+
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver

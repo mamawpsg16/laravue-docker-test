@@ -1,17 +1,18 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Services\RequestTracker;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AppointmentController;
-use App\Http\Controllers\AvailabilityController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DoctorController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\AvailabilityController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +26,15 @@ use App\Http\Controllers\SearchController;
 
 Route::prefix('v1')->group(function () {
 
+    Route::get('/track', function (RequestTracker $a) {
+        $b = app(RequestTracker::class);
+
+        return [
+            'a_id' => $a->id,
+            'b_id' => $b->id,
+            'same_instance' => $a === $b, // ✅ true for scoped binding
+        ];
+    });
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
 

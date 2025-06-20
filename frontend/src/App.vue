@@ -1,30 +1,41 @@
 <template>
-  <div id="app" class="h-screen bg-gray-50 overflow-hidden">
-    <AppSidebar v-if="isAuthenticated" v-model:visible="sidebarVisible" />
+  <div id="app" class="h-screen flex flex-col bg-gray-50">
+    <!-- Show Navbar and Footer only if NOT authenticated -->
+    <AppNavbar v-if="!isAuthenticated" />
+    
+    <div class="flex flex-1 overflow-visible">
+      <!-- Sidebar only for authenticated users -->
+      <AppSidebar v-if="isAuthenticated" v-model:visible="sidebarVisible" />
 
-    <div 
-      class="transition-all duration-300 ease-in-out h-full"
-      :class="mainContentClasses"
-    >
-      <!-- ✅ Mobile Toggle Header -->
-      <div v-if="isAuthenticated && isMobile" class="p-4 bg-white shadow-md flex items-center lg:hidden">
-        <button @click="sidebarVisible = true" class="text-gray-700 focus:outline-none">
-          <i class="bi bi-list text-2xl"></i>
-        </button>
-        <span class="ml-4 text-lg font-semibold">Menu</span>
-      </div>
-
-      <main class="h-full overflow-y-auto bg-white">
-        <div class="p-4 w-full">
-          <router-view />
+      <!-- Main Content -->
+      <div 
+        class="transition-all duration-300 ease-in-out flex-1 flex flex-col"
+        :class="mainContentClasses"
+      >
+        <!-- Mobile Toggle Header - Only for authenticated users -->
+        <div v-if="isAuthenticated && isMobile" class="p-4 bg-white shadow-md flex items-center lg:hidden">
+          <button @click="sidebarVisible = true" class="text-gray-700 focus:outline-none">
+            <i class="bi bi-list text-2xl"></i>
+          </button>
+          <span class="ml-4 text-lg font-semibold">Menu</span>
         </div>
-      </main>
+
+        <main class="flex-1 overflow-y-auto bg-white">
+          <router-view />
+        </main>
+      </div>
     </div>
+
+    <AppFooter v-if="!isAuthenticated" />
+    <BackToTop v-if="!isAuthenticated"/>
   </div>
 </template>
 
 <script setup>
 import AppSidebar from '@/components/AppSidebar.vue'
+import AppNavbar from '@/components/AppNavbar.vue'
+import AppFooter from '@/components/AppFooter.vue'
+import BackToTop from '@/components/BackToTop.vue'
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 
@@ -38,14 +49,12 @@ const isMounted = ref(false)
 const updateIsMobile = () => {
   const nowMobile = window.innerWidth < 992
 
-  // If switching from mobile to desktop, show the sidebar
   if (!nowMobile && isMobile.value) {
     sidebarVisible.value = true
   }
 
   isMobile.value = nowMobile
 
-  // Initial sidebar visibility
   if (!isMounted.value) {
     sidebarVisible.value = !nowMobile
   }
@@ -73,24 +82,3 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', updateIsMobile)
 })
 </script>
-
-<style scoped>
-main::-webkit-scrollbar {
-  width: 6px;
-}
-main::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-main::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
-}
-main::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-@media (max-width: 991px) {
-  .main-content {
-    margin-left: 0 !important;
-  }
-}
-</style>
