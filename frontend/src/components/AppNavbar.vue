@@ -4,13 +4,13 @@
       <div class="flex items-center justify-between h-16">
         <!-- Logo -->
         <div class="flex items-center space-x-10">
-          <a href="/" class="flex items-center space-x-2">
+          <router-link :to="{name:'home'}" class="flex items-center space-x-2">
             <svg class="w-8 h-8 text-white" viewBox="0 0 48 48" fill="none">
               <circle cx="24" cy="24" r="22" fill="#FFFFFF" />
               <path d="M16 32L24 16L32 32" stroke="#4F46E5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
             <span class="text-2xl font-extrabold text-white tracking-tight">MyShop</span>
-          </a>
+          </router-link>
           <!-- Products Mega Menu -->
           <div class="group relative">
             <button class="flex items-center space-x-1 font-medium text-white hover:text-indigo-300">
@@ -76,8 +76,10 @@
           </div>
 
           <!-- Auth Links -->
-          <router-link to="/login" class="text-white font-semibold hover:bg-indigo-500 px-4 py-2 rounded transition">Login</router-link>
-          <router-link to="/register" class="bg-white text-indigo-600 font-semibold px-4 py-2 rounded shadow hover:bg-indigo-100 transition">Register</router-link>
+          <template v-if="!isAuthenticated">
+            <router-link to="/login" class="text-white font-semibold hover:bg-indigo-500 px-4 py-2 rounded transition" >Login</router-link>
+            <router-link to="/register" class="bg-white text-indigo-600 font-semibold px-4 py-2 rounded shadow hover:bg-indigo-100 transition">Register</router-link>
+          </template>
         </div>
 
         <!-- Mobile Hamburger -->
@@ -109,6 +111,11 @@
 </template>
 
 <script setup>
+import { useAuthStore } from '@/stores/auth'
+import { computed } from 'vue';
+
+const authStore = useAuthStore()
+const isAuthenticated = computed(() => authStore.isAuthenticated)
 import { ref } from 'vue'
 const menuOpen = ref(false)
 </script>

@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import api from '@/services/axios';
+import { apiV1 } from '@/services/axios';
 import { useRouter } from 'vue-router'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import GalleryCarousel from '@/components/GalleryCarousel.vue'
@@ -162,7 +162,7 @@ function subscribe() {
 
 
 async function requestTrack(){
-  const response = await api.get('/track');
+  const response = await apiV1.get('/track');
 
   console.log(response,'response');
 }

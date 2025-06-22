@@ -3,7 +3,7 @@
     <!-- Show Navbar and Footer only if NOT authenticated -->
     <AppNavbar v-if="!isAuthenticated" />
     
-    <div class="flex flex-1 overflow-visible">
+    <div>
       <!-- Sidebar only for authenticated users -->
       <AppSidebar v-if="isAuthenticated" v-model:visible="sidebarVisible" />
 
@@ -20,7 +20,7 @@
           <span class="ml-4 text-lg font-semibold">Menu</span>
         </div>
 
-        <main class="flex-1 overflow-y-auto bg-white">
+        <main class="flex-1 bg-white">
           <router-view />
         </main>
       </div>
@@ -72,7 +72,9 @@ const mainContentClasses = computed(() => {
 })
 
 onMounted(() => {
-  authStore.fetchUser()
+  // ❌ Remove this line - auth initialization now happens in router
+  // authStore.fetchUser()
+  
   updateIsMobile()
   isMounted.value = true
   window.addEventListener('resize', updateIsMobile)

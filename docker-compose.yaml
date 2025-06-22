@@ -25,8 +25,8 @@ services:
     ports:
       - "5175:5174"  # Host port 5175 maps to container port 5174
     volumes:
-      - ./frontend:/app
-      - /app/node_modules  # Avoid host-container conflicts
+    - ./frontend:/app
+    - node_modules_vue:/app/node_modules
     networks:
       - app-network
 
@@ -96,8 +96,7 @@ networks:
     driver: bridge # Default bridge network
 
 volumes:
-  # dbdata: # Named volume for database persistence
-  #   driver: local
-  vendor-volume:  # Define a named volume for vendor
+  vendor-volume:
     driver: local
   pgdata:
+  node_modules_vue:

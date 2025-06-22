@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <div class="page-container">
     <!-- <div v-if="!user?.email_verified_at" class="bg-yellow-100 border border-yellow-300 text-yellow-800 p-4 rounded shadow">
       <p class="text-sm font-medium">Your email is not verified yet!</p>
       <p class="text-xs mt-1">Please check your email and verify to access the full features.</p>
@@ -50,13 +50,18 @@ import Vue3EasyDatatable from '@/components/Table/Vue3EasyDatatable.vue';
 import FieldWrapper from '@/components/Form/FieldWrapper.vue'
 // Auth
 const authStore = useAuthStore();
-const $axios = useGlobalProperties().$axios;
+// const $axios = useGlobalProperties().$axios;
 
 const user = computed(() => authStore.user);
 const role = computed(() => authStore.userRole);
 const items = ref([
   { name: 'Alice', age: 30, email: 'alice@example.com', status: true },
   { name: 'Bob', age: 25, email: 'bob@example.com', status: false },
+  { name: 'Bob', age: 25, email: 'bob@example.com', status: false },
+    { name: 'Bob', age: 25, email: 'bob@example.com', status: false },
+    { name: 'Bob', age: 25, email: 'bob@example.com', status: false },
+    { name: 'Bob', age: 25, email: 'bob@example.com', status: false },
+    { name: 'Bob', age: 25, email: 'bob@example.com', status: false },
 ]);
 const headers= ref([
         { text: 'Name', value: 'name' },
@@ -101,12 +106,12 @@ const cameFromRegister = ref(false);
 
 const resendVerificationEmail = async () => {
   try {
-    const response = await $axios.post('/email/verification-notification');
-    await Swal.fire({
-      title: response.data.message,
-      text: "Check your email to verify your account.",
-      icon: "success",
-    });
+    // const response = await $axios.post('/email/verification-notification');
+    // await Swal.fire({
+    //   title: response.data.message,
+    //   text: "Check your email to verify your account.",
+    //   icon: "success",
+    // });
   } catch (error) {
     console.error('Error sending verification email:', error);
     alert('Failed to send verification email.');
@@ -126,3 +131,10 @@ onMounted(() => {
   }
 });
 </script>
+
+<style scoped>
+.vue3-easy-data-table__body tr:last-child td{
+    border-bottom: var(--easy-table-row-border) !important;
+}
+
+</style>

@@ -8,6 +8,7 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\AppointmentController;
@@ -40,6 +41,11 @@ Route::prefix('v1')->group(function () {
 
     // Authenticated routes (IMPORTANT: includes 'web' for session auth)
     Route::middleware(['auth:sanctum'])->group(function () {
+        Route::prefix('documents')->group(function () {
+            Route::post('/upload', [DocumentController::class, 'store']);
+            Route::get('/index', [DocumentController::class, 'index']);
+            
+        });
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/user', [AuthController::class, 'user']);
 

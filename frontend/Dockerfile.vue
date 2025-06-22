@@ -28,20 +28,15 @@
 # Dockerfile.vue
 FROM node:18
 
-# Set working directory inside container
 WORKDIR /app
 
-# Copy package files first (for better layer caching)
 COPY package*.json ./
 
-# Install dependencies
 RUN npm install
 
-# Copy the rest of the project
+# ✅ Force esbuild to match binary to container architecture
+RUN npm rebuild esbuild
+
 COPY . .
 
-# Expose Vite/Vue CLI port
-# EXPOSE 5173
-
-# Start the dev server with hot reload
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5174"]

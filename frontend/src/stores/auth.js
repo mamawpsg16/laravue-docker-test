@@ -7,12 +7,14 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     user,
     isLoading,
+    isLoggingOut,
     login,
     register,
     logout,
     fetchUser,
     setAuthenticated,
     userRole,
+    initialize
   } = useAuth();
 
   return {
@@ -25,5 +27,7 @@ export const useAuthStore = defineStore('auth', () => {
     fetchUser,
     userRole,
     setAuthenticated,
+    initialize,
+    isLoggingOut
   };
 });

@@ -98,12 +98,12 @@
           :backend-error="getBackendError('address',  backendErrors)"
         />
   
-        <button type="submit" :disabled="loading"
+        <button type="submit" :disabled="loading" :class="{ 'opacity-50 cursor-not-allowed': loading }"
           class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-1.5 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-3"> <!-- reduced py-2 to py-1.5, added mt-3 -->
           <span v-if="loading" class="flex items-center justify-center">
             <span class="ml-2">Creating account...</span>
           </span>
-          <span v-else>Create account</span>
+          <span v-else>Register</span>
         </button>
   
         <div v-if="errorMessage" class="rounded-md bg-red-50 p-2 text-sm text-red-800 text-center"> <!-- reduced p-4 to p-2 -->

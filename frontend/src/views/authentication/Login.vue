@@ -32,9 +32,12 @@
         <button
           type="submit"
           class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
+          :disabled="loading"
+          :class="{ 'opacity-50 cursor-not-allowed': loading }"
         >
-        Login
+          {{ loading ? 'Logging In...' : 'Login' }}
         </button>
+
       </div>
 
       <p class="mt-3 text-center text-sm text-gray-600">

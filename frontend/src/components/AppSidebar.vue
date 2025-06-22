@@ -17,7 +17,7 @@
           @click.stop
         >
           <!-- Brand/logo -->
-          <div class="flex flex-col px-3 pt-6 pb-1 border-b border-gray-200">
+          <div class="flex flex-col px-3 pt-6 pb-1 border-b border-gray-200 shrink-0">
             <div class="flex flex-col items-center grow">
               <img src="@/assets/images/xero.svg" alt="User Profile" class="h-24 w-24 rounded-full object-cover" />
               <div class="flex-grow" />
@@ -25,58 +25,62 @@
             </div>
           </div>
 
-          <!-- Navigation links -->
-          <ul class="flex flex-col px-3 py-4 space-y-1">
-            <li v-for="link in mainLinks" :key="link.path">
-              <RouterLink 
-                :to="link.path"
-                class="nav-link flex items-center"
-                :class="{ active: isActive(link.path) }"
-              >
-                <i v-if="link.meta?.icon" :class="`${link.meta.icon} mr-3 text-base`"></i>
-                <span class="text-base font-medium">{{ formatLabel(link.name) }}</span>
-              </RouterLink>
-            </li>
-
-            <!-- System Admin Menu -->
-            <li>
-              <div
-                class="nav-link flex items-center justify-between cursor-pointer"
-                @click="toggleSubmenu('system_admin')"
-              >
-                <span class="flex items-center">
-                  <i class="bi bi-person-fill-lock mr-3 text-base"></i>
-                  <span class="text-base font-medium">System Admin</span>
-                </span>
-                <i 
-                  class="text-sm transition-transform duration-200"
-                  :class="openSubmenus.system_admin ? 'bi bi-chevron-down' : 'bi bi-chevron-right'"
-                ></i>
-              </div>
-              <ul v-show="openSubmenus.system_admin" class="flex flex-col ml-6 mt-1 space-y-1 submenu">
-                <li 
-                  v-for="child in systemAdminChildren" 
-                  :key="child.path"
+          <!-- Navigation links - scrollable area -->
+          <div class="flex-1 overflow-y-auto px-3 py-4">
+            <ul class="flex flex-col space-y-1">
+              <li v-for="link in mainLinks" :key="link.path">
+                <RouterLink 
+                  :to="link.path"
+                  class="nav-link flex items-center"
+                  :class="{ active: isActive(link.path) }"
                 >
-                  <RouterLink 
-                    :to="`/system-admin/${child.path}`"
-                    class="nav-link block flex items-center"
-                    :class="{ active: isActive(`/system-admin/${child.path}`) }"
+                  <i v-if="link.meta?.icon" :class="`${link.meta.icon} mr-3 text-base`"></i>
+                  <span class="text-base font-medium">{{ formatLabel(link.name) }}</span>
+                </RouterLink>
+              </li>
+
+              <!-- System Admin Menu -->
+              <li>
+                <div
+                  class="nav-link flex items-center justify-between cursor-pointer"
+                  @click="toggleSubmenu('system_admin')"
+                >
+                  <span class="flex items-center">
+                    <i class="bi bi-person-fill-lock mr-3 text-base"></i>
+                    <span class="text-base font-medium">System Admin</span>
+                  </span>
+                  <i 
+                    class="text-sm transition-transform duration-200"
+                    :class="openSubmenus.system_admin ? 'bi bi-chevron-down' : 'bi bi-chevron-right'"
+                  ></i>
+                </div>
+                <ul v-show="openSubmenus.system_admin" class="flex flex-col ml-6 mt-1 space-y-1 submenu">
+                  <li 
+                    v-for="child in systemAdminChildren" 
+                    :key="child.path"
                   >
-                    <i v-if="child.meta?.icon" :class="`${child.meta.icon} mr-2 text-sm`"></i>
-                    <span class="text-sm font-medium">{{ formatLabel(child.name) }}</span>
-                  </RouterLink>
-                </li>
-              </ul>
-            </li>
-          </ul>
+                    <RouterLink 
+                      :to="`/system-admin/${child.path}`"
+                      class="nav-link block flex items-center"
+                      :class="{ active: isActive(`/system-admin/${child.path}`) }"
+                    >
+                      <i v-if="child.meta?.icon" :class="`${child.meta.icon} mr-2 text-sm`"></i>
+                      <span class="text-sm font-medium">{{ formatLabel(child.name) }}</span>
+                    </RouterLink>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
 
           <!-- Logout -->
           <button
             @click="logout"
+            :disabled="isLoggingOut"
             class="mt-auto m-3 mb-5 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            :class="{ 'opacity-50 cursor-not-allowed': isLoggingOut }"
           >
-            Logout
+          {{ isLoggingOut ? 'Logging Out...' : 'Logout' }}
           </button>
         </nav>
       </Transition>
@@ -93,6 +97,7 @@ const props = defineProps({
   visible: Boolean
 })
 const emit = defineEmits(['update:visible'])
+
 
 const route = useRoute()
 const router = useRouter()
@@ -124,6 +129,7 @@ const mainLinks = computed(() => {
   )
 })
 
+
 const systemAdminChildren = computed(() => {
   const systemAdminRoute = router.options.routes.find(r => r.path === '/system-admin')
   return systemAdminRoute?.children || []
@@ -134,7 +140,10 @@ function formatLabel(name) {
 }
 
 const authStore = useAuthStore();
-const user = authStore.user.full_name;
+
+const isLoggingOut = computed(() => authStore.isLoggingOut);
+const user = computed(() => authStore.user.full_name);
+
 const logout = async () => {
   await authStore.logout()
   router.push({ name: 'login' })

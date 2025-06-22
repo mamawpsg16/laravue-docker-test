@@ -1,10 +1,11 @@
 import { ref, watch } from 'vue';
-import api from '@/services/axios'; // Adjust path if needed
+import { authApi, apiV1 } from '@/services/axios'; // Adjust path if needed
 
 const isAuthenticated = ref(false);
 const user = ref(null);
 const isLoading = ref(false);
 const userRole = ref(null);
+const isLoggingOut = ref(false);
 
 // Automatically sync userRole when user changes
 watch(user, (val) => {
@@ -13,10 +14,8 @@ watch(user, (val) => {
 
 async function login(credentials) {
   try {
-    await api.get('/sanctum/csrf-cookie', {
-      baseURL: 'http://localhost:8002'
-    });
-    const response = await api.post('/login', credentials);
+    await authApi.get('/sanctum/csrf-cookie');
+    const response = await apiV1.post('/login', credentials);
 
     isAuthenticated.value = true;
     user.value = response.data.user; // userRole updates via watch
@@ -28,10 +27,8 @@ async function login(credentials) {
 
 async function register(userData) {
   try {
-    await api.get('/sanctum/csrf-cookie', {
-      baseURL: 'http://localhost:8002'
-    });
-    const response = await api.post('/register', userData);
+    await authApi.get('/sanctum/csrf-cookie');
+    const response = await apiV1.post('/register', userData);
 
     isAuthenticated.value = true;
     user.value = response.data.user; // userRole updates via watch
@@ -43,11 +40,17 @@ async function register(userData) {
 
 async function logout() {
   try {
-    await api.post('/logout');
+    isLoggingOut.value = true;
+    await apiV1.post('/logout');
     isAuthenticated.value = false;
     user.value = null;
     userRole.value = null;
+    isLoggingOut.value = false;
   } catch (error) {
+    isAuthenticated.value = false;
+    user.value = null;
+    userRole.value = null;
+    isLoggingOut.value = false;
     throw new Error('Logout failed');
   }
 }
@@ -57,18 +60,31 @@ function setAuthenticated(status) {
 }
 
 async function fetchUser() {
+  // 👈 Prevent multiple simultaneous calls
+  if (isLoading.value) {
+    return;
+  }
+
   isLoading.value = true;
   try {
-    const response = await api.get('/user');
+    const response = await apiV1.get('/user');
     isAuthenticated.value = true;
     user.value = response.data; // userRole updates via watch
   } catch (error) {
+    // Session might be expired or user not authenticated
     isAuthenticated.value = false;
     user.value = null;
     userRole.value = null;
+    console.log('User not authenticated or session expired');
   } finally {
     isLoading.value = false;
   }
+}
+
+
+
+async function initialize() {
+  await this.fetchUser()
 }
 
 export function useAuth() {
@@ -82,5 +98,7 @@ export function useAuth() {
     logout,
     fetchUser,
     setAuthenticated,
+    initialize,
+    isLoggingOut
   };
 }
