@@ -208,7 +208,7 @@ const tableColumns = computed(() => {
         if (col.footer !== undefined) {
           columnDef.footer = col.footer
         }
-        return createColumnHelper().accessor(col.key, columnDef)
+        return createColumnHelper().accessor(col.field, columnDef)
       })
     : []
 })
@@ -220,7 +220,9 @@ const pageIndex = ref(0)  // current page index (0-based)
 const pageSize = ref(defaultPageSize.value)  // default page size
 
 const table = useVueTable({
-  data: props.data,
+  get data() {
+    return props.data;
+  },
   columns: toValue(tableColumns),
   state: {
     columnVisibility: columnVisibility.value,

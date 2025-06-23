@@ -28,7 +28,7 @@
             </div>
             <div class="stat-details">
               <p class="section-label">Total Users</p>
-              <p class="section-value">{{ users.length }}</p>
+              <p class="section-value">{{ data.length }}</p>
             </div>
           </div>
         </div>
@@ -76,150 +76,8 @@
         </div>
       </div>
     </div>
-
-    <VueGoodTableNext v-slot="{ props }" :data="formattedData" :columns="columns">
-      <template v-if="props.column.field === 'status'">
-        <FieldWrapper>
-          <span class="text-sm mr-3 text-gray-600">
-            {{ props.row.is_active ? 'Active' : 'Inactive' }}
-          </span>
-          <div
-            @click="toggleStatus(props.index)"
-            class="relative inline-flex h-6 w-11 items-center rounded-full cursor-pointer transition-colors"
-            :class="props.row.is_active ? 'bg-blue-600' : 'bg-gray-300'"
-          >
-            <span
-              class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ease-in-out"
-              :class="props.row.is_active ? 'translate-x-6' : 'translate-x-1'"
-            />
-          </div>
-        </FieldWrapper>
-        
-      </template>
-      <template v-else>
-        {{ props.row[props.column.field] }}
-      </template>
-    </VueGoodTableNext>
-    <div class="border rounded-lg border-gray-200  mb-6">
-      <!-- Users Table -->
-      <!-- <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Contact
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Role
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date of Birth
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Emergency Contact
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="user in filteredUsers" :key="user.id" class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center">
-                    <div class="flex-shrink-0 h-10 w-10">
-                      <div v-if="user.avatar" class="h-10 w-10 rounded-full overflow-hidden">
-                        <img :src="user.avatar" :alt="user.first_name" class="h-full w-full object-cover">
-                      </div>
-                      <div v-else class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                        <span class="text-gray-600 font-medium text-sm">
-                          {{ user.first_name.charAt(0).toUpperCase() }}{{ user.last_name.charAt(0).toUpperCase() }}
-                        </span>
-                      </div>
-                    </div>
-                    <div class="ml-4">
-                      <div class="text-sm font-medium text-gray-900">
-                        {{ user.first_name }} {{ user.middle_name ? user.middle_name + ' ' : '' }}{{ user.last_name }}
-                      </div>
-                      <div class="text-sm text-gray-500">{{ user.email }}</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ user.phone || 'N/A' }}</div>
-                  <div class="text-sm text-gray-500">{{ user.gender || 'Not specified' }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    :class="[
-                      'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                      getRoleColor(user.role)
-                    ]"
-                  >
-                    {{ formatRole(user.role) }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ formatDate(user.birth_date) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div v-if="user.emergency_contact_name" class="text-sm text-gray-900">
-                    {{ user.emergency_contact_name }}
-                  </div>
-                  <div v-if="user.emergency_contact_phone" class="text-sm text-gray-500">
-                    {{ user.emergency_contact_phone }}
-                  </div>
-                  <div v-if="!user.emergency_contact_name && !user.emergency_contact_phone" class="text-sm text-gray-500">
-                    N/A
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    :class="[
-                      'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                      user.is_active
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    ]"
-                  >
-                    {{ user.is_active ? 'Active' : 'Inactive' }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div class="flex justify-end gap-2">
-                    <button
-                      @click="openEditModal(user)"
-                      class="text-blue-600 hover:text-blue-900 p-1 rounded"
-                      title="Edit"
-                    >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </button>
-                    <button
-                      @click="deleteUser(user.id)"
-                      class="text-red-600 hover:text-red-900 p-1 rounded"
-                      title="Delete"
-                    >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div> -->
-    </div>
+    <DataTable :data="formattedData" :columns="columns"/>
+  
   </div>
 
   <!-- Add/Edit Modal -->
@@ -442,7 +300,7 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, computed, reactive, onMounted, onUnmounted, h } from 'vue'
 import BaseInput from '@/components/Form/BaseInput.vue'
 import BaseModal from '@/components/BaseModal.vue'
 import FieldWrapper from '@/components/Form/FieldWrapper.vue'
@@ -455,20 +313,37 @@ import { required, email, sameAs, helpers, minLength, maxLength } from '@vuelida
 import { useAuthStore } from '@/stores/auth'
 import { useNotify } from '@/composables/useNotify'
 import VueGoodTableNext from '@/components/Table/VueGoodTableNext.vue'
+import DataTable from '@/components/Table/TanStackTable.vue' 
+import StatusButtonRenderer from './StatusButtonRenderer.vue'
 import { formatDate } from '@/utils/dateHelpers';
 const columns = ref([
-  {  label: 'First Name', field: 'first_name',   width: '150px'},
-  {  label: 'Middle Name', field: 'middle_name', width: '150px'},
-  {  label: 'Last Name', field: 'last_name', width: '150px'},
-  {  label: 'Email', field: 'email', width: '150px'},
-  {  label: 'Phone', field: 'phone', width: '150px'},
-  {  label: 'Birth Date', field: 'birth_date', width: '150px'},
-  {  label: 'Gender', field: 'gender', width: '150px'},
-  {  label: 'Address', field: 'address', width: '150px'},
-  {  label: 'Emergency Contact #', field: 'address', width: '150px'},
-  {  label: 'Emergency Contact #', field: 'address', width: '150px'},
-  {  label: 'Role', field: 'role', width: '150px'},
-  {  label: 'Status', field: 'status', width: '150px'},
+  { label: 'First Name', field: 'first_name'},
+  { label: 'Middle Name', field: 'middle_name'},
+  { label: 'Last Name', field: 'last_name'},
+  { label: 'Email', field: 'email'},
+  { label: 'Phone', field: 'phone'},
+  { label: 'Birth Date', field: 'birth_date'},
+  { label: 'Gender', field: 'gender'},
+  { label: 'Address', field: 'address'},
+  { label: 'Emergency Contact #', field: 'address'},
+  { label: 'Emergency Contact #', field: 'address'},
+  { label: 'Role', field: 'role'},
+  { label: 'Status', field: 'status', 
+    cell: (info) => h(StatusButtonRenderer, {
+      rowData: info.row.original,
+      onUpdateStatus: (updatedRow) => {
+        const index = data.value.findIndex(r => r.id === updatedRow.id);
+        if (index !== -1) {
+          // Create a new array with the updated row
+          data.value = data.value.map(row =>
+            row.id === updatedRow.id
+              ? { ...updatedRow, status: updatedRow.is_active ? 'Active' : 'Inactive' }
+              : row
+          );
+        }
+      }
+    }),
+  },
 ]);
 // Role options
 const roleOptions = ref([
@@ -479,127 +354,7 @@ const roleOptions = ref([
 ])
 
 // Test users data matching database structure
-const users = ref([
-  {
-    id: 1,
-    first_name: 'John',
-    middle_name: 'Michael',
-    last_name: 'Doe',
-    email: 'john.doe@example.com',
-    email_verified_at: '2024-01-15T10:30:00Z',
-    phone: '+1234567890',
-    birth_date: '1985-03-15',
-    gender: 'male',
-    address: '123 Main St, Anytown, ST 12345',
-    emergency_contact_name: 'Jane Doe',
-    emergency_contact_phone: '+1234567891',
-    role: 'patient',
-    avatar: null,
-    is_active: true,
-    last_login_at: '2024-02-01T09:15:00Z',
-    created_at: '2024-01-10T08:00:00Z',
-    updated_at: '2024-02-01T09:15:00Z'
-  },
-  {
-    id: 2,
-    first_name: 'Sarah',
-    middle_name: null,
-    last_name: 'Johnson',
-    email: 'sarah.johnson@hospital.com',
-    email_verified_at: '2024-01-20T14:00:00Z',
-    phone: '+1234567892',
-    birth_date: '1978-07-22',
-    gender: 'female',
-    address: '456 Oak Ave, Medical District, ST 12346',
-    emergency_contact_name: 'Robert Johnson',
-    emergency_contact_phone: '+1234567893',
-    role: 'doctor',
-    avatar: null,
-    is_active: true,
-    last_login_at: '2024-02-05T07:30:00Z',
-    created_at: '2024-01-15T10:00:00Z',
-    updated_at: '2024-02-05T07:30:00Z'
-  },
-  {
-    id: 1,
-    first_name: 'John',
-    middle_name: 'Michael',
-    last_name: 'Doe',
-    email: 'john.doe@example.com',
-    email_verified_at: '2024-01-15T10:30:00Z',
-    phone: '+1234567890',
-    birth_date: '1985-03-15',
-    gender: 'male',
-    address: '123 Main St, Anytown, ST 12345',
-    emergency_contact_name: 'Jane Doe',
-    emergency_contact_phone: '+1234567891',
-    role: 'patient',
-    avatar: null,
-    is_active: true,
-    last_login_at: '2024-02-01T09:15:00Z',
-    created_at: '2024-01-10T08:00:00Z',
-    updated_at: '2024-02-01T09:15:00Z'
-  },
-  {
-    id: 2,
-    first_name: 'Sarah',
-    middle_name: null,
-    last_name: 'Johnson',
-    email: 'sarah.johnson@hospital.com',
-    email_verified_at: '2024-01-20T14:00:00Z',
-    phone: '+1234567892',
-    birth_date: '1978-07-22',
-    gender: 'female',
-    address: '456 Oak Ave, Medical District, ST 12346',
-    emergency_contact_name: 'Robert Johnson',
-    emergency_contact_phone: '+1234567893',
-    role: 'doctor',
-    avatar: null,
-    is_active: true,
-    last_login_at: '2024-02-05T07:30:00Z',
-    created_at: '2024-01-15T10:00:00Z',
-    updated_at: '2024-02-05T07:30:00Z'
-  },
-  {
-    id: 1,
-    first_name: 'John',
-    middle_name: 'Michael',
-    last_name: 'Doe',
-    email: 'john.doe@example.com',
-    email_verified_at: '2024-01-15T10:30:00Z',
-    phone: '+1234567890',
-    birth_date: '1985-03-15',
-    gender: 'male',
-    address: '123 Main St, Anytown, ST 12345',
-    emergency_contact_name: 'Jane Doe',
-    emergency_contact_phone: '+1234567891',
-    role: 'patient',
-    avatar: null,
-    is_active: true,
-    last_login_at: '2024-02-01T09:15:00Z',
-    created_at: '2024-01-10T08:00:00Z',
-    updated_at: '2024-02-01T09:15:00Z'
-  },
-  {
-    id: 2,
-    first_name: 'Sarah',
-    middle_name: null,
-    last_name: 'Johnson',
-    email: 'sarah.johnson@hospital.com',
-    email_verified_at: '2024-01-20T14:00:00Z',
-    phone: '+1234567892',
-    birth_date: '1978-07-22',
-    gender: 'female',
-    address: '456 Oak Ave, Medical District, ST 12346',
-    emergency_contact_name: 'Robert Johnson',
-    emergency_contact_phone: '+1234567893',
-    role: 'doctor',
-    avatar: null,
-    is_active: true,
-    last_login_at: '2024-02-05T07:30:00Z',
-    created_at: '2024-01-15T10:00:00Z',
-    updated_at: '2024-02-05T07:30:00Z'
-  },
+const data = ref([
   {
     id: 1,
     first_name: 'John',
@@ -642,6 +397,126 @@ const users = ref([
   },
   {
     id: 3,
+    first_name: 'John',
+    middle_name: 'Michael',
+    last_name: 'Doe',
+    email: 'john.doe@example.com',
+    email_verified_at: '2024-01-15T10:30:00Z',
+    phone: '+1234567890',
+    birth_date: '1985-03-15',
+    gender: 'male',
+    address: '123 Main St, Anytown, ST 12345',
+    emergency_contact_name: 'Jane Doe',
+    emergency_contact_phone: '+1234567891',
+    role: 'patient',
+    avatar: null,
+    is_active: true,
+    last_login_at: '2024-02-01T09:15:00Z',
+    created_at: '2024-01-10T08:00:00Z',
+    updated_at: '2024-02-01T09:15:00Z'
+  },
+  {
+    id: 4,
+    first_name: 'Sarah',
+    middle_name: null,
+    last_name: 'Johnson',
+    email: 'sarah.johnson@hospital.com',
+    email_verified_at: '2024-01-20T14:00:00Z',
+    phone: '+1234567892',
+    birth_date: '1978-07-22',
+    gender: 'female',
+    address: '456 Oak Ave, Medical District, ST 12346',
+    emergency_contact_name: 'Robert Johnson',
+    emergency_contact_phone: '+1234567893',
+    role: 'doctor',
+    avatar: null,
+    is_active: true,
+    last_login_at: '2024-02-05T07:30:00Z',
+    created_at: '2024-01-15T10:00:00Z',
+    updated_at: '2024-02-05T07:30:00Z'
+  },
+  {
+    id: 5,
+    first_name: 'John',
+    middle_name: 'Michael',
+    last_name: 'Doe',
+    email: 'john.doe@example.com',
+    email_verified_at: '2024-01-15T10:30:00Z',
+    phone: '+1234567890',
+    birth_date: '1985-03-15',
+    gender: 'male',
+    address: '123 Main St, Anytown, ST 12345',
+    emergency_contact_name: 'Jane Doe',
+    emergency_contact_phone: '+1234567891',
+    role: 'patient',
+    avatar: null,
+    is_active: true,
+    last_login_at: '2024-02-01T09:15:00Z',
+    created_at: '2024-01-10T08:00:00Z',
+    updated_at: '2024-02-01T09:15:00Z'
+  },
+  {
+    id: 6,
+    first_name: 'Sarah',
+    middle_name: null,
+    last_name: 'Johnson',
+    email: 'sarah.johnson@hospital.com',
+    email_verified_at: '2024-01-20T14:00:00Z',
+    phone: '+1234567892',
+    birth_date: '1978-07-22',
+    gender: 'female',
+    address: '456 Oak Ave, Medical District, ST 12346',
+    emergency_contact_name: 'Robert Johnson',
+    emergency_contact_phone: '+1234567893',
+    role: 'doctor',
+    avatar: null,
+    is_active: true,
+    last_login_at: '2024-02-05T07:30:00Z',
+    created_at: '2024-01-15T10:00:00Z',
+    updated_at: '2024-02-05T07:30:00Z'
+  },
+  {
+    id: 7,
+    first_name: 'John',
+    middle_name: 'Michael',
+    last_name: 'Doe',
+    email: 'john.doe@example.com',
+    email_verified_at: '2024-01-15T10:30:00Z',
+    phone: '+1234567890',
+    birth_date: '1985-03-15',
+    gender: 'male',
+    address: '123 Main St, Anytown, ST 12345',
+    emergency_contact_name: 'Jane Doe',
+    emergency_contact_phone: '+1234567891',
+    role: 'patient',
+    avatar: null,
+    is_active: true,
+    last_login_at: '2024-02-01T09:15:00Z',
+    created_at: '2024-01-10T08:00:00Z',
+    updated_at: '2024-02-01T09:15:00Z'
+  },
+  {
+    id: 8,
+    first_name: 'Sarah',
+    middle_name: null,
+    last_name: 'Johnson',
+    email: 'sarah.johnson@hospital.com',
+    email_verified_at: '2024-01-20T14:00:00Z',
+    phone: '+1234567892',
+    birth_date: '1978-07-22',
+    gender: 'female',
+    address: '456 Oak Ave, Medical District, ST 12346',
+    emergency_contact_name: 'Robert Johnson',
+    emergency_contact_phone: '+1234567893',
+    role: 'doctor',
+    avatar: null,
+    is_active: true,
+    last_login_at: '2024-02-05T07:30:00Z',
+    created_at: '2024-01-15T10:00:00Z',
+    updated_at: '2024-02-05T07:30:00Z'
+  },
+  {
+    id: 9,
     first_name: 'Michael',
     middle_name: 'David',
     last_name: 'Smith',
@@ -661,7 +536,7 @@ const users = ref([
     updated_at: '2024-02-06T08:00:00Z'
   },
   {
-    id: 4,
+    id: 10,
     first_name: 'Emily',
     middle_name: 'Rose',
     last_name: 'Davis',
@@ -681,7 +556,7 @@ const users = ref([
     updated_at: '2024-02-05T16:45:00Z'
   },
   {
-    id: 5,
+    id: 11,
     first_name: 'Robert',
     middle_name: null,
     last_name: 'Wilson',
@@ -724,7 +599,7 @@ function formatData(data){
     }
 }
 
-const formattedData = computed(() => users.value.map(data => formatData(data)));
+const formattedData = computed(() => data.value.map(data => formatData(data)));
 
 const rules = computed(() => ({
   first_name: { required },
@@ -764,7 +639,7 @@ const rules = computed(() => ({
 
 function toggleStatus(index) {
   console.log('WTF', index);
-  users.value[index].is_active = !users.value[index].is_active;
+  data.value[index].is_active = !data.value[index].is_active;
 }
 
 const genderOptions = ref([
@@ -774,7 +649,7 @@ const genderOptions = ref([
 ])
 
 function handleStatusUpdate({ id, is_active, status }) {
-  const user = users.value.find(user => user.id === id)
+  const user = data.value.find(user => user.id === id)
   if (user) {
     user.is_active = is_active
     user.status = status
@@ -844,19 +719,19 @@ function getRoleColor(role) {
 
 // Computed properties
 const activeUsers = computed(() => 
-  users.value.filter(user => user.is_active).length
+  data.value.filter(user => user.is_active).length
 )
 
 const patientCount = computed(() => 
-  users.value.filter(user => user.role === 'patient').length
+  data.value.filter(user => user.role === 'patient').length
 )
 
 const doctorCount = computed(() => 
-  users.value.filter(user => user.role === 'doctor').length
+  data.value.filter(user => user.role === 'doctor').length
 )
 
 const filteredUsers = computed(() => {
-  let filtered = users.value
+  let filtered = data.value
 
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
