@@ -35,13 +35,14 @@
         @update:sort="handleSort"
       />
     </div> -->
+    <TanStackExample/>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import DataTable from '@/components/Table/TanStackTable.vue' // Adjust path as needed
-
+import TanStackExample from './TanStackExample.vue'
 // Client-side data
 const clientData = ref([
   {
