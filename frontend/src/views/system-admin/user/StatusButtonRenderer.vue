@@ -1,8 +1,18 @@
 <template>
   <section class="space-x-2">
-    <button @click="toggleStatus" class="px-3 py-1 rounded" :class="{'bg-green-500': isActive, 'bg-red-500': !isActive}">{{ isActive ? 'Active' : 'Inactive' }}</button>
-    <button @click="editRow" class="px-3 py-1 rounded bg-blue-500">Edit</button>
-    <button @click="deleteRow" class="px-3 py-1 rounded bg-red-500 ">Delete</button>
+    <div
+      title="Status"
+      @click="toggleStatus"
+      class="relative inline-flex h-6 w-11 items-center rounded-full cursor-pointer transition-colors"
+      :class="{'bg-green-500': isActive, 'bg-red-500': !isActive}"
+    >
+      <span
+        class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ease-in-out"
+        :class="isActive ? 'translate-x-6' : 'translate-x-1'"
+      />
+    </div>
+    <button @click="editRow" title="Edit" class="px-3 py-1 rounded text-blue-600 text-lg"><i class="bi bi-pencil-square"></i></button>
+    <button @click="deleteRow" title="Delete" class="px-3 py-1 rounded text-red-600 text-lg"><i class="bi bi-trash3"></i></button>
   </section>
 </template>
 

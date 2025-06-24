@@ -72,7 +72,7 @@ const routes = [
       {
         path: 'users',
         name: 'users',
-        component: () => import('@/views/system-admin/user/Index.vue'),
+        component: () => import('@/views/system-admin/user/UserList.vue'),
         meta: { requiresAuth: true, icon: 'bi bi-people-fill', showInSidebar: true },
       },
       {

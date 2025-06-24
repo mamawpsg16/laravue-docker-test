@@ -1,6 +1,6 @@
 <template>
-  <TransitionRoot as="template" :show="props.modelValue" @after-leave="$emit('closed')">
-    <Dialog class="relative z-10" @close="$emit('update:modelValue', false)">
+  <TransitionRoot as="template" :show="modelValue" @after-leave="$emit('closed')">
+    <Dialog class="relative z-10" @close="modelValue = false">
       <TransitionChild as="template"
         enter="ease-out duration-300"
         enter-from="opacity-0"
@@ -28,16 +28,14 @@
                 widthClass
               ]"
             >
-              <!-- Close button -->
               <button
-                @click="$emit('update:modelValue', false)"
-                class="absolute -top-2 -right-2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                @click="modelValue = false" class="absolute -top-2 -right-2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
                 <svg class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
-              
+
               <slot />
             </DialogPanel>
           </TransitionChild>
@@ -49,24 +47,21 @@
 
 <script setup>
 import { TransitionRoot, TransitionChild, Dialog, DialogPanel } from '@headlessui/vue'
-import { onUpdated, computed } from 'vue';
+import { computed } from 'vue';
 
+// Define the v-model prop using defineModel
+const modelValue = defineModel({ type: Boolean, default: false }); // <--- THE BIG CHANGE!
+
+// Define other non-v-model props as usual
 const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false,
-  },
   maxWidth: {
     type: String,
     default: 'lg',
   },
-})
+});
 
-defineEmits(['update:modelValue', 'closed'])
-
-onUpdated(() => {
-  console.log('Component updated, visible:', props.modelValue)
-})
+// Define other non-v-model emits as usual
+defineEmits(['closed']); // Only 'closed' now, as update:modelValue is handled by defineModel
 
 const widthClass = computed(() => {
   const sizes = {

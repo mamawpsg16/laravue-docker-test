@@ -1,6 +1,13 @@
-<!-- components/Table/TanstackTable.vue -->
 <template>
-  <div class="p-4 h-full flex flex-col gap-4" v-bind="$attrs">
+  <div class="p-4 h-full flex flex-col gap-4 border border-gray-300 rounded-md" v-bind="$attrs">
+    <div v-if="tableHeaderTitle" class="flex justify-between items-center p-3 rounded-t-lg border-b  -mx-4 -mt-4">
+      <h2 v-if="tableHeaderTitle" class="text-xl font-semibold">
+        {{ tableHeaderTitle }}
+      </h2>
+      <div v-if="hasTableHeaderActionsSlot" class="flex space-x-2">
+        <slot name="table-actions"></slot>
+      </div>
+    </div>
     <!-- Search and Page Size Controls -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
 
@@ -63,7 +70,6 @@
         <tbody v-if="rowCount > 0" class="divide-y divide-gray-100">
           <tr v-for="row in table.getRowModel().rows" :key="row.id" class="hover:bg-gray-50 transition">
             <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="px-4 py-3 border border-gray-300":class="{
-                // *** NEW: Apply text alignment to cell ***
                 'text-left': cell.column.columnDef.meta?.textAlign === 'left',
                 'text-right': cell.column.columnDef.meta?.textAlign === 'right',
                 'text-center': cell.column.columnDef.meta?.textAlign === 'center', // Add center if needed
@@ -80,9 +86,7 @@
             <td
               :colspan="tableColumns.length"
               class="text-center py-8 border border-gray-300" >
-              <slot name="no-data">
                 <p class="text-gray-500 text-lg">{{ noDataMessage }}</p>
-              </slot>
             </td>
           </tr>
         </tbody>
@@ -93,7 +97,6 @@
               :key="footer.id"
               class="px-4 py-2 font-medium border border-gray-300"
               :class="{
-                // *** NEW: Apply text alignment to footer (if you have them) ***
                 'text-left': footer.column.columnDef.meta?.textAlign === 'left',
                 'text-right': footer.column.columnDef.meta?.textAlign === 'right',
                 'text-center': footer.column.columnDef.meta?.textAlign === 'center', // Add center if needed
@@ -174,7 +177,7 @@ import {
   getPaginationRowModel,
   getFilteredRowModel
 } from '@tanstack/vue-table'
-import { ref, toValue, computed, toRefs, h, watch } from 'vue' // 'watch' is essential for external state updates
+import { ref, toValue, computed, toRefs, h, watch, useSlots } from 'vue' // 'watch' is essential for external state updates
 import IndeterminateCheckbox from './IndeterminateCheckbox.vue'
 
 // Allows attributes not explicitly defined as props to be passed to the root element
@@ -185,7 +188,7 @@ defineOptions({
 // Define the props that this component accepts
 const props = defineProps({
   noDataMessage:{
-    type: Boolean,
+    type: String,
     default: 'No data found.'
   },
   enableRowSelection: {
@@ -220,8 +223,22 @@ const props = defineProps({
     type: String,
     default: 'all', // 'all' or 'page'. Controls if header checkbox selects all data or just current page
     validator: (value) => ['all', 'page'].includes(value) // Ensures valid options
+  },
+  tableHeaderTitle: {
+    type: String,
+    require:true,
+    default: '' // Default to empty, so header is not shown if no title
+  },
+  tableActions: {
+    type: Array, // Array of objects: { label: string, onClick: Function, icon?: string, primary?: boolean }
+    default: () => [] // Default to empty array, so no buttons are shown
   }
 })
+
+// Use useSlots() to check if a slot has content
+const slots = useSlots();
+const hasTableHeaderActionsSlot = computed(() => !!slots['table-actions']); // Check if the slot is provided
+
 
 // Define the custom events that this component can emit
 const emit = defineEmits([
