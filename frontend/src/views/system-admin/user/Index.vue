@@ -76,8 +76,17 @@
         </div>
       </div>
     </div>
-    <DataTable :data="formattedData" :columns="columns"/>
-  
+    <DataTable :data="formattedData" :columns="columns" :enable-row-selection="true"  @update:selectedRows="handleSelectedRowsChange" v-model="internalRowSelectionState"/>
+    
+    <div v-if="selectedUsers.length > 0" class="mt-4 p-4 border rounded-md bg-blue-50">
+      <h3 class="font-semibold mb-2">Selected Users:</h3>
+      <ul>
+        <li v-for="user in selectedUsers" :key="user.id">
+          {{ user.first_name }} {{ user.last_name }} ({{ user.email }})
+        </li>
+      </ul>
+      <button @click="clearSelection" class="btn-primary mt-2">Clear Selection</button>
+    </div>
   </div>
 
   <!-- Add/Edit Modal -->
@@ -316,6 +325,7 @@ import VueGoodTableNext from '@/components/Table/VueGoodTableNext.vue'
 import DataTable from '@/components/Table/TanStackTable.vue' 
 import StatusButtonRenderer from './StatusButtonRenderer.vue'
 import { formatDate } from '@/utils/dateHelpers';
+
 const columns = ref([
   { label: 'First Name', field: 'first_name'},
   { label: 'Middle Name', field: 'middle_name'},
@@ -332,15 +342,19 @@ const columns = ref([
     cell: (info) => h(StatusButtonRenderer, {
       rowData: info.row.original,
       onUpdateStatus: (updatedRow) => {
-        const index = data.value.findIndex(r => r.id === updatedRow.id);
+        const index = data.value.findIndex(r => r.id === updatedRow.id)
         if (index !== -1) {
-          // Create a new array with the updated row
-          data.value = data.value.map(row =>
-            row.id === updatedRow.id
-              ? { ...updatedRow, status: updatedRow.is_active ? 'Active' : 'Inactive' }
-              : row
-          );
+          data.value[index] = {...updatedRow}
         }
+      },
+      onEditRow: (row) => {
+        console.log(row,'onEditRow');
+        alert('Edit clicked for ' + row.first_name)
+      },
+ 
+      onDeleteRow: (row) => {
+        console.log(row,'onEditRow');
+        alert('Delete clicked for ' + row.first_name)
       }
     }),
   },
@@ -576,6 +590,21 @@ const data = ref([
     updated_at: '2024-02-01T10:00:00Z'
   }
 ])
+
+const selectedUsers = ref([]);
+const internalRowSelectionState = ref({});
+
+const clearSelection = (rows) => {
+  // To clear selection, you need to update the internal rowSelection state in DataTable.
+  // This is where `v-model` (update:modelValue) comes in handy.
+  internalRowSelectionState.value = {};
+  selectedUsers.value = []; // Also clear the parent's array
+};
+
+const handleSelectedRowsChange = (rows) => {
+  selectedUsers.value = rows;
+  console.log('Selected Rows:', selectedUsers.value); // For debugging
+};
 
 // Reactive state
 const backendErrors = ref(null)
