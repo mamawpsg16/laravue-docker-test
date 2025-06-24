@@ -30,8 +30,8 @@
 
     <!-- Table -->
     <div class="flex-1 overflow-auto max-h-full ">
-      <table class="table-wrapper w-full text-left text-sm ">
-        <thead class="text-gray-700 uppercase text-xs sticky top-0 z-10">
+      <table class="table-wrapper w-full text-left text-base">
+        <thead class="text-gray-700  text-base sticky top-0 z-10">
           <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
             <th
               v-for="header in headerGroup.headers"
@@ -42,7 +42,7 @@
               }"
               @click="header.column.getToggleSortingHandler()?.($event)"
             >
-              <div class="flex items-center gap-1">
+              <div class="flex items-center gap-2">
                 <FlexRender
                   :render="header.column.columnDef.header"
                   :props="header.getContext()"
@@ -60,13 +60,29 @@
             </th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
+        <tbody v-if="rowCount > 0" class="divide-y divide-gray-100">
           <tr v-for="row in table.getRowModel().rows" :key="row.id" class="hover:bg-gray-50 transition">
-            <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="px-4 py-3 border border-gray-300">
+            <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="px-4 py-3 border border-gray-300":class="{
+                // *** NEW: Apply text alignment to cell ***
+                'text-left': cell.column.columnDef.meta?.textAlign === 'left',
+                'text-right': cell.column.columnDef.meta?.textAlign === 'right',
+                'text-center': cell.column.columnDef.meta?.textAlign === 'center', // Add center if needed
+              }">
               <FlexRender
                 :render="cell.column.columnDef.cell"
                 :props="cell.getContext()"
               />
+            </td>
+          </tr>
+        </tbody>
+        <tbody v-else class="divide-y divide-gray-100">
+          <tr>
+            <td
+              :colspan="tableColumns.length"
+              class="text-center py-8 border border-gray-300" >
+              <slot name="no-data">
+                <p class="text-gray-500 text-lg">{{ noDataMessage }}</p>
+              </slot>
             </td>
           </tr>
         </tbody>
@@ -76,6 +92,12 @@
               v-for="footer in footerGroup.headers"
               :key="footer.id"
               class="px-4 py-2 font-medium border border-gray-300"
+              :class="{
+                // *** NEW: Apply text alignment to footer (if you have them) ***
+                'text-left': footer.column.columnDef.meta?.textAlign === 'left',
+                'text-right': footer.column.columnDef.meta?.textAlign === 'right',
+                'text-center': footer.column.columnDef.meta?.textAlign === 'center', // Add center if needed
+              }"
             >
               <FlexRender :render="footer.column.columnDef.footer" :props="footer.getContext()" />
             </td>
@@ -162,6 +184,10 @@ defineOptions({
 
 // Define the props that this component accepts
 const props = defineProps({
+  noDataMessage:{
+    type: Boolean,
+    default: 'No data found.'
+  },
   enableRowSelection: {
     type: Boolean,
     default: false // Whether to enable row selection checkboxes
@@ -280,7 +306,10 @@ const tableColumns = computed(() => {
       header: col.label, // Column header text
       cell: col.cell ? col.cell : info => info.getValue(), // Cell rendering function, defaults to value
       enableSorting: col.sortable !== false, // Enable/disable sorting
-      sortAs: col.sortAs ? col.sortAs : undefined // Custom sort accessor if needed
+      sortAs: col.sortAs ? col.sortAs : undefined, // Custom sort accessor if needed
+       meta: {
+        textAlign: col.textAlign || 'left' // Default to 'left' if not specified
+      }
     }
     if (col.footer !== undefined) {
       columnDef.footer = col.footer // Add footer if defined

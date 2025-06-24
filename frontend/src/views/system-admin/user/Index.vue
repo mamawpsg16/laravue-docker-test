@@ -76,8 +76,9 @@
         </div>
       </div>
     </div>
-    <DataTable :data="formattedData" :columns="columns" :enable-row-selection="true"  @update:selectedRows="handleSelectedRowsChange" v-model="internalRowSelectionState"/>
-    
+    <DataTable :data="formattedData" :columns="columns"  @update:selectedRows="handleSelectedRowsChange" v-model="internalRowSelectionState">
+    </DataTable>
+
     <div v-if="selectedUsers.length > 0" class="mt-4 p-4 border rounded-md bg-blue-50">
       <h3 class="font-semibold mb-2">Selected Users:</h3>
       <ul>
@@ -327,18 +328,7 @@ import StatusButtonRenderer from './StatusButtonRenderer.vue'
 import { formatDate } from '@/utils/dateHelpers';
 
 const columns = ref([
-  { label: 'First Name', field: 'first_name'},
-  { label: 'Middle Name', field: 'middle_name'},
-  { label: 'Last Name', field: 'last_name'},
-  { label: 'Email', field: 'email'},
-  { label: 'Phone', field: 'phone'},
-  { label: 'Birth Date', field: 'birth_date'},
-  { label: 'Gender', field: 'gender'},
-  { label: 'Address', field: 'address'},
-  { label: 'Emergency Contact #', field: 'address'},
-  { label: 'Emergency Contact #', field: 'address'},
-  { label: 'Role', field: 'role'},
-  { label: 'Status', field: 'status', 
+  { label: 'Actions', field: 'status', 
     cell: (info) => h(StatusButtonRenderer, {
       rowData: info.row.original,
       onUpdateStatus: (updatedRow) => {
@@ -355,9 +345,22 @@ const columns = ref([
       onDeleteRow: (row) => {
         console.log(row,'onEditRow');
         alert('Delete clicked for ' + row.first_name)
-      }
+      },
     }),
+    sortable:false
   },
+  { label: 'First Name', field: 'first_name'},
+  { label: 'Middle Name', field: 'middle_name'},
+  { label: 'Last Name', field: 'last_name'},
+  { label: 'Email Address', field: 'email'},
+  { label: 'Phone', field: 'phone'},
+  { label: 'Birth Date', field: 'birth_date'},
+  { label: 'Gender', field: 'gender'},
+  { label: 'Address', field: 'address'},
+  { label: 'Emergency Contact #', field: 'address'},
+  { label: 'Emergency Contact #', field: 'address'},
+  { label: 'Role', field: 'role'},
+  
 ]);
 // Role options
 const roleOptions = ref([
@@ -590,6 +593,8 @@ const data = ref([
     updated_at: '2024-02-01T10:00:00Z'
   }
 ])
+
+// const data = ref([])
 
 const selectedUsers = ref([]);
 const internalRowSelectionState = ref({});

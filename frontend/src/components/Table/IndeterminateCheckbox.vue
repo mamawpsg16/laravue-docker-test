@@ -1,6 +1,7 @@
 <template>
   <input
     type="checkbox"
+    class="form-check-input border-2 border-gray-200"
     :checked="checked"
     :disabled="disabled"
     @change="$emit('change', $event)"
