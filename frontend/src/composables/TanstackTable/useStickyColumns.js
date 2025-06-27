@@ -131,7 +131,6 @@ export function useStickyColumns(props, table) {
     }
 
     // Also check if the column is currently visible before applying sticky styles
-    // We already have access to the table instance.
     const isColumnVisible = table.value?.getColumn(columnId)?.getIsVisible();
     if (!isColumnVisible) {
       // If the column is hidden, it shouldn't have sticky styles
@@ -152,7 +151,7 @@ export function useStickyColumns(props, table) {
     // Return CSS properties for sticky positioning
     return {
       position: 'sticky',                         // CSS sticky positioning
-      left: `${stickyInfo.lef + 2}px`,              // Calculated left offset
+      left: `${stickyInfo.left + 2}px`,           // FIXED: Was 'lef' instead of 'left'
       zIndex: 5                                   // Stack above regular columns
     };
   };
@@ -161,14 +160,12 @@ export function useStickyColumns(props, table) {
   // WATCHERS AND LIFECYCLE
   // ==================================================
 
-  // Watch for changes that require recalculation
-  // Now also explicitly watches table.value.getState().columnVisibility
+  // OPTIMIZED: More selective watchers to prevent unnecessary recalculations
+  // Watch only for structural changes, not data changes
   watch(
     () => [
-      props.columns || [],
-      props.data || [],
       props.stickyColumns || [],
-      table.value?.getState()?.columnVisibility // IMPORTANT: Watch column visibility changes
+      table.value?.getState()?.columnVisibility // Only watch column visibility and sticky config
     ],
     () => {
       // Recalculate after DOM updates
@@ -184,6 +181,17 @@ export function useStickyColumns(props, table) {
     () => table.value?.getState()?.columnSizingInfo,
     () => {
       // Recalculate positions when column sizes change
+      nextTick(() => {
+        calculateStickyPositions();
+      })
+    },
+    { deep: true }
+  )
+
+  // ADDED: Watch for column order changes (if columns can be reordered)
+  watch(
+    () => table.value?.getState()?.columnOrder,
+    () => {
       nextTick(() => {
         calculateStickyPositions();
       })
