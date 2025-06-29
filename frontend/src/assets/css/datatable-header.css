@@ -1,0 +1,39 @@
+/* DataTable Header Component Styles */
+.datatable-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 1rem 0; /* Remove horizontal padding - keep only vertical */
+  border-bottom: 1px solid var(--datatable-border-color, #e0e0e0);
+}
+
+.datatable-header-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+  line-height: 1.25;
+  padding-left: 0; /* Add left padding to content if needed */
+}
+
+.datatable-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-right: 0; /* Add right padding to content if needed */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 640px) {
+  .datatable-header-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .datatable-header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

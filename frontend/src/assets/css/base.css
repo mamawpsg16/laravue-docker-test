@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import './datatable.css';
 
 /* ================================
    CUSTOM CSS CLASSES FOR REUSABILITY

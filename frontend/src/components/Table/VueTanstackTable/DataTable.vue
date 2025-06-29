@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 h-full flex flex-col gap-4 border border-gray-300 rounded-md" v-bind="$attrs">
+  <div class="datatable-container-wrapper" v-bind="$attrs">
     <DataTableHeader
       :tableHeaderTitle="tableHeaderTitle"
       :hasTableHeaderActionsSlot="hasTableHeaderActionsSlot"
@@ -8,15 +8,14 @@
         <slot name="table-actions"></slot>
       </template>
     </DataTableHeader>
-
-     <DataTableControls
+    <DataTableControls
       :pageSize="tableState.pagination.pageSize"
       :pageSizeOptions="pageSizeOptions"
       :globalFilter="tableState.globalFilter"
       :globalSearchPlaceHolder="globalSearchPlaceHolder"
       @update:pageSize="onPageSizeChangeFromControls"
       @update:globalFilter="onGlobalFilterChangeFromControls"
-      :allColumns="table.getAllLeafColumns()"         
+      :allColumns="table.getAllLeafColumns()"
       :getIsAllColumnsVisible="table.getIsAllColumnsVisible"
       :getToggleAllColumnsVisibilityHandler="table.getToggleAllColumnsVisibilityHandler"
       :setColumnVisibility="table.setColumnVisibility"
@@ -126,7 +125,7 @@ const props = defineProps({
   },
   tableHeight: {
     type: String,
-    default: '680px'
+    default: ''
   },
   stickyHeader: {
     type: Boolean,
@@ -147,7 +146,7 @@ const emit = defineEmits([
   'update:selectedRows',
   'update:modelValue',
   'update:columnVisibility', // Keep this if parent needs the raw state object
-  'update:visibleColumns'   // NEW: Emit for the derived list of visible IDs
+  'update:visibleColumns'    // NEW: Emit for the derived list of visible IDs
 ]);
 
 // Check for the presence of the 'table-actions' slot
@@ -236,7 +235,7 @@ function onPageSizeChangeFromControls(newSize) {
 /**
  * Handles the `update:globalFilter` event from `DataTableControls`.
  * Updates the table's global filter using TanStack Table's `setGlobalFilter` method.
- * @param {string} newFilter The new global filter string.
+ * @param {string} newFilter
  */
 function onGlobalFilterChangeFromControls(newFilter) {
   table.value.setGlobalFilter(newFilter);
@@ -254,7 +253,7 @@ watch(
       });
     }
 
-     // NEW LOGIC: Emit derived visible column IDs when columnVisibility changes
+      // NEW LOGIC: Emit derived visible column IDs when columnVisibility changes
     if (table.value) {
       const visibleColumns = table.value.getVisibleLeafColumns().map(col => col.id);
       emit('update:visibleColumns', visibleColumns);
@@ -274,5 +273,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Scoped styles specific to this DataTable component. */
+/* No more scoped styles here. All styles are external in datatable.css */
+@import '@/assets/css/datatable.css';
 </style>

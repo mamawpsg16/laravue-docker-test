@@ -1,0 +1,37 @@
+/* Core Data Table Styles */
+
+/* Base styles / CSS variables (optional) */
+/* @import './_variables.css'; */
+/* @import './_base.css'; */
+
+/* Component-specific styles */
+/* @import './datatable-header.css'; */
+/* @import './datatable-controls.css'; */
+/* @import './datatable-pagination.css'; */
+/* Add imports for other component styles as you convert them */
+/* @import './datatable-table.css'; */
+/* @import './datatable-pagination.css'; */
+
+/* Any global utility classes that are not component-specific */
+.datatable-container-wrapper {
+  padding: 1rem; /* p-4 (16px) */
+  height: 100%; /* h-full */
+  display: flex; /* flex */
+  flex-direction: column; /* flex-col */
+  gap: 1rem; /* gap-4 (16px) */
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.375rem; /* rounded-md */
+}
+
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

@@ -1,0 +1,76 @@
+/* Indeterminate Checkbox Component Styles */
+.indeterminate-checkbox {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.25rem;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+  outline: none;
+}
+
+/* Focus state */
+.indeterminate-checkbox:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+}
+
+/* Checked state */
+.indeterminate-checkbox:checked {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+/* Checked state checkmark */
+.indeterminate-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 0.25rem;
+  height: 0.5rem;
+  border: 2px solid #ffffff;
+  border-top: none;
+  border-left: none;
+}
+
+/* Indeterminate state */
+.indeterminate-checkbox:indeterminate {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+/* Indeterminate state dash */
+.indeterminate-checkbox:indeterminate::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0.5rem;
+  height: 2px;
+  background-color: #ffffff;
+}
+
+/* Disabled state */
+.indeterminate-checkbox:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Hover state (when not disabled) */
+.indeterminate-checkbox:hover:not(:disabled) {
+  border-color: #9ca3af;
+}
+
+.indeterminate-checkbox:hover:not(:disabled):checked,
+.indeterminate-checkbox:hover:not(:disabled):indeterminate {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}

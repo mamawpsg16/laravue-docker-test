@@ -1,31 +1,31 @@
 <template>
-  <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-    <div class="text-sm text-gray-600">
+  <div class="pagination-container">
+    <div class="pagination-info">
       Showing {{ pageStart }} to {{ pageEnd }} of {{ rowCount }} entries
     </div>
 
-    <div class="flex items-center gap-1 flex-wrap text-sm">
+    <div class="pagination-controls">
       <button
-        class="px-3 py-1 border rounded-md hover:bg-gray-100 disabled:opacity-50"
+        class="pagination-button"
         :disabled="pageIndex === 0"
         @click="$emit('first-page')"
       >
         First
       </button>
       <button
-        class="px-3 py-1 border rounded-md hover:bg-gray-100 disabled:opacity-50"
+        class="pagination-button"
         :disabled="pageIndex === 0"
         @click="$emit('previous-page')"
       >
         Prev
       </button>
 
-      <div class="flex items-center gap-1">
+      <div class="pagination-pages">
         <button
           v-for="page in visiblePages"
           :key="page"
-          class="px-3 py-1 border rounded-md hover:bg-blue-200"
-          :class="page === pageIndex + 1 ? 'bg-blue-500 text-white hover:bg-blue-600' : ''"
+          class="page-number-button"
+          :class="{ active: page === pageIndex + 1 }"
           @click="$emit('go-to-page', page)"
         >
           {{ page }}
@@ -33,14 +33,14 @@
       </div>
 
       <button
-        class="px-3 py-1 border rounded-md hover:bg-gray-100 disabled:opacity-50"
+        class="pagination-button"
         :disabled="pageIndex >= pageCount - 1"
         @click="$emit('next-page')"
       >
         Next
       </button>
       <button
-        class="px-3 py-1 border rounded-md hover:bg-gray-100 disabled:opacity-50"
+        class="pagination-button"
         :disabled="pageIndex >= pageCount - 1"
         @click="$emit('last-page')"
       >
@@ -110,7 +110,5 @@ const pageEnd = computed(() => Math.min(props.rowCount, (props.pageIndex + 1) * 
 </script>
 
 <style scoped>
-/* Scoped styles specific to DataTablePagination.vue. */
-/* These styles will only apply to elements within this component to prevent style conflicts. */
-/* Currently, most styling is handled by Tailwind CSS utility classes directly in the template. */
+@import '@/assets/css/datatable-pagination.css';
 </style>

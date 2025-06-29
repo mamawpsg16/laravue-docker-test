@@ -1,8 +1,12 @@
 <template>
   <input
     type="checkbox"
-    class="form-check-input border-2 border-gray-200"
-    :checked="checked"        :disabled="disabled"      @change="$emit('change', $event)" ref="checkbox"            />
+    class="indeterminate-checkbox"
+    :checked="checked"
+    :disabled="disabled"
+    @change="$emit('change', $event)"
+    ref="checkbox"
+  />
 </template>
 
 <script setup>
@@ -48,7 +52,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Scoped styles specific to IndeterminateCheckbox.vue. */
-/* These styles will only apply to elements within this component to prevent style conflicts. */
-/* Currently, most styling is handled by Tailwind CSS utility classes directly in the template. */
+@import '@/assets/css/indeterminate-checkbox.css';
 </style>

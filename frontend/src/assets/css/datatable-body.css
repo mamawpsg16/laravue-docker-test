@@ -1,0 +1,250 @@
+/* Styles for DataTableBody.vue */
+
+/* Table container - handles both vertical and horizontal overflow */
+.datatable-body-container {
+  overflow: auto; /* Enables scrolling when content overflows */
+  /* This border should be for the scrollable area, not the full table outer border. */
+  /* If you want this border to align with the full table outer border, ensure its parent has no padding. */
+  /* Consider if this border is needed here if .datatable-main-container already has an outer border. */
+  border: 1px solid var(--datatable-border-color, #e5e7eb); /* Using variable for consistency */
+  position: relative; /* Needed for sticky positioning within this container */
+  /* You might also want to set background here if it's the scrollable surface */
+  background-color: var(--datatable-background-color, #ffffff);
+}
+
+/* Table wrapper - ensures proper table layout */
+.datatable-body-wrapper {
+  width: 100%; /* w-full */
+  text-align: left; /* text-left */
+  font-size: 1rem; /* text-base */
+  min-width: 100%; /* Ensures table takes at least full width of container */
+  width: max-content; /* Allows table to grow beyond 100% and enable horizontal scroll */
+  border-collapse: separate; /* Changed from collapse to separate for better sticky column border handling */
+  border-spacing: 0; /* Removes spacing between cells while using separate borders */
+}
+
+/* Sticky header styling (applied to <thead>) */
+.datatable-body-thead {
+  color: #4a5568; /* text-gray-700 */
+  font-size: 1rem; /* text-base */
+}
+
+.sticky-header {
+  position: sticky; /* Makes the header sticky */
+  top: 0; /* Sticks to the top of its scrolling container */
+  z-index: 10; /* Ensures it stays above regular table content when scrolling */
+  background-color: var(--datatable-header-bg, #f9fafb); /* IMPORTANT: Ensure background for sticky header */
+}
+
+/* Header Cells (<th>) */
+.datatable-header-cell {
+  padding: 0.75rem 1rem; /* px-4 py-3 */
+  font-weight: 500; /* font-medium */
+  border: 1px solid var(--datatable-border-color, #e5e7eb); /* Using consistent border color */
+  background-color: var(--datatable-header-bg, #f9fafb); /* Always ensure a background */
+  white-space: nowrap; /* Ensures text doesn't wrap */
+}
+
+/* Cursor for sortable columns */
+.datatable-header-cell-sortable {
+  cursor: pointer;
+  user-select: none; /* select-none */
+}
+
+/* Content within header cells (flex for icon/text) */
+.datatable-header-cell-content {
+  display: flex; /* flex */
+  align-items: center; /* items-center */
+  gap: 0.5rem; /* gap-2 */
+}
+
+/* Sort icon wrapper */
+.datatable-sort-icon-wrapper {
+  cursor: pointer; /* cursor-pointer */
+}
+
+/* Sticky column styling (applied to <th> and <td>) */
+.sticky-column {
+  /* No 'left' property here; it's handled by getStickyColumnStyle via inline styles */
+  
+  /* IMPORTANT: Solid background for the sticky column cells */
+  /* This ensures content doesn't show through when scrolling */
+  background-color: var(--datatable-background-color, #ffffff); 
+  /* For sticky header cells, this will be overridden by .sticky-header .sticky-column */
+
+  /* Use border instead of box-shadow for more reliable sticky column separation */
+  border-right: 1px solid var(--datatable-border-color, #e5e7eb) !important;
+  
+  /* Ensure the z-index is set for sticky cells. Higher z-index means it's on top. */
+  z-index: 2; /* Increased z-index for sticky body cells */
+  position: relative; /* Ensure z-index takes effect */
+}
+
+/* Higher z-index and specific background for sticky header + sticky column intersection */
+.sticky-header .sticky-column {
+  z-index: 15; /* Ensures sticky header columns are above regular sticky columns and scrolled content */
+  /* Use the header's background for these cells */
+  background-color: var(--datatable-header-bg, #f9fafb); 
+  /* If you want a different background for the intersection */
+  /* background-color: var(--sticky-header-intersection-bg, #eef2ff); */
+}
+
+/* Background colors for sticky cells - adjust as needed, these might be redundant if previous rules handle it */
+/* These classes (sticky-header-column-bg, sticky-body-cell-bg) should be applied dynamically
+   by your useStickyColumns composable or directly in DataTableBody.vue */
+.sticky-header-column-bg {
+  background-color: var(--sticky-header-column-bg, #eef2ff); /* Using variable */
+}
+.sticky-body-cell-bg {
+  background-color: var(--sticky-body-cell-bg, #f8faff); /* Using variable */
+}
+.sticky-footer-cell-bg {
+  background-color: var(--sticky-footer-cell-bg, #dbeafe); /* Using variable */
+}
+
+
+/* Table Body (<tbody>) */
+.datatable-body-tbody {
+  background-color: #ffffff; /* bg-white (default) */
+  /* Border top for entire body - this also might be redundant if main container has full border */
+  /* Or if you want a divider between header and body, this is okay */
+  border-top: 1px solid var(--datatable-border-color, #e5e7eb); /* Using consistent border color */
+}
+
+/* Table Body Row (<tr>) */
+.datatable-body-row {
+  transition: background-color 0.15s ease-in-out; /* transition */
+}
+
+.datatable-body-row:hover {
+  background-color: var(--datatable-row-hover-bg, #f9fafb); /* hover:bg-gray-50 */
+}
+
+/* Table Body Cell (<td>) */
+.datatable-body-cell {
+  padding: 0.75rem 1rem; /* px-4 py-3 */
+  border: 1px solid var(--datatable-border-color, #e5e7eb); /* Using consistent border color */
+  white-space: nowrap; /* whitespace-nowrap */
+  background-color: var(--datatable-background-color, #ffffff); /* Ensure background for all cells */
+}
+
+/* Text alignment for cells based on meta property */
+.datatable-body-cell.text-left,
+.datatable-footer-cell.text-left {
+  text-align: left;
+}
+.datatable-body-cell.text-right,
+.datatable-footer-cell.text-right {
+  text-align: right;
+}
+.datatable-body-cell.text-center,
+.datatable-footer-cell.text-center {
+  text-align: center;
+}
+
+/* Loader row and spinner */
+.datatable-body-loader-row {
+  /* No specific styles needed for the row itself beyond default tbody/tr */
+}
+
+.datatable-loader-cell {
+  text-align: center; /* text-center */
+  padding-top: 2rem; /* py-8 (8 * 4 = 32px, approx 2rem) */
+  padding-bottom: 2rem;
+  border: 1px solid var(--datatable-border-color, #e5e7eb); /* Using consistent border color */
+}
+
+.datatable-loader-content {
+  display: flex; /* flex */
+  flex-direction: column; /* flex-col */
+  align-items: center; /* items-center */
+  justify-content: center; /* justify-center */
+}
+
+.datatable-spinner {
+  animation: spin 1s linear infinite; /* animate-spin */
+  border-radius: 9999px; /* rounded-full */
+  height: 3rem; /* h-12 */
+  width: 3rem; /* w-12 */
+  border-bottom: 2px solid #1a202c; /* border-b-2 border-gray-900 */
+  border-left: 2px solid transparent; /* Ensure only bottom border is visible for spin effect */
+  border-right: 2px solid transparent;
+  border-top: 2px solid transparent;
+}
+
+.datatable-loader-text {
+  margin-top: 1rem; /* mt-4 */
+  color: #4a5568; /* text-gray-700 */
+}
+
+/* No data row */
+.datatable-body-no-data {
+  /* No specific styles needed for the row itself */
+}
+
+.datatable-no-data-cell {
+  text-align: center; /* text-center */
+  padding-top: 2rem; /* py-8 */
+  padding-bottom: 2rem;
+  border: 1px solid var(--datatable-border-color, #e5e7eb); /* Using consistent border color */
+}
+
+.datatable-no-data-message {
+  color: #6b7280; /* text-gray-500 */
+  font-size: 1.125rem; /* text-lg */
+}
+
+/* Table Footer (<tfoot>) */
+.datatable-body-tfoot {
+  /* No specific styles needed for the footer element itself */
+}
+
+/* Table Footer Cell (<td>) */
+.datatable-footer-cell {
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  font-weight: 500; /* font-medium */
+  border: 1px solid var(--datatable-border-color, #e5e7eb); /* Using consistent border color */
+  background-color: var(--datatable-header-bg, #f9fafb); /* bg-gray-50 (consistent with header) */
+  white-space: nowrap;
+}
+
+/* Custom scrollbar styles for webkit browsers (Chrome, Safari, Edge) */
+.datatable-body-container::-webkit-scrollbar {
+  width: 8px; /* Width of the vertical scrollbar */
+  height: 8px; /* Height of the horizontal scrollbar */
+}
+
+.datatable-body-container::-webkit-scrollbar-track {
+  background: var(--datatable-background-color, #f1f5f9); /* Light track color */
+  border-radius: 4px; /* Rounded corners for the track */
+}
+
+.datatable-body-container::-webkit-scrollbar-thumb {
+  background: var(--datatable-border-color, #cbd5e1); /* Gray scrollbar thumb */
+  border-radius: 4px; /* Rounded corners for the thumb */
+}
+
+.datatable-body-container::-webkit-scrollbar-thumb:hover {
+  background: var(--datatable-text-color, #94a3b8); /* Darker gray on hover */
+}
+
+.datatable-body-container::-webkit-scrollbar-corner {
+  background: var(--datatable-background-color, #f1f5f9); /* Corner area where scrollbars meet */
+}
+
+/* Utility class to allow text wrapping for specific cells if needed */
+.datatable-body-wrapper .wrap-text {
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 200px; /* Example: for cells that should wrap text */
+}
+
+/* Basic spinner animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
